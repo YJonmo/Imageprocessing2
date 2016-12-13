@@ -9,7 +9,7 @@
 #include <QString>
 #include <QFileDialog>
 
-#include "arguments.h"
+//#include "arguments.h"
 
 using namespace std;
 using namespace cv;
@@ -37,8 +37,10 @@ const char* winName="Crop Image";
 bool clicked=false;
 int i=0;
 char imgName[15];
-
-
+vector<Mat> Histogram(3);
+//cv::Scalar     meann;
+//cv::Scalar     stddev;
+Mat meann(1,4,CV_64F),stddev(1,4,CV_64F);
 
 void showHistogram(Mat& ROI)
 {
@@ -53,17 +55,18 @@ void showHistogram(Mat& ROI)
         hist[i] = Mat::zeros(1, bins, CV_32SC1);
 
     // Calculate the histogram of the image
-    for (int i = 0; i < ROI.rows; i++)
+    for (int k = 0; k < nc; k++)
     {
-        for (int j = 0; j < ROI.cols; j++)
+        for (int i = 0; i < ROI.rows; i++)
         {
-            for (int k = 0; k < nc; k++)
+            for (int j = 0; j < ROI.cols; j++)
             {
                 uchar val = nc == 1 ? ROI.at<uchar>(i,j) : ROI.at<Vec3b>(i,j)[k];
                 hist[k].at<int>(val) += 1;
             }
         }
     }
+    //Histogram = hist;
 
     // For each histogram arrays, obtain the maximum (peak) value
     // Needed to normalize the display later
@@ -128,6 +131,7 @@ void showImage()
     if(cropRect.width>0&&cropRect.height>0)
     {
         ROI=img(cropRect);
+        meanStdDev(ROI, meann, stddev);
         namedWindow("Cropped",WINDOW_NORMAL);
         resizeWindow("Cropped", Window*2, Window*2);
         imshow("Cropped",ROI);
@@ -289,16 +293,6 @@ int main(int argc, char *argv[])
     img_background2.convertTo(img_background, CV_8UC3);
 
 
-    Scalar mean, stddev;
-    meanStdDev(img_background, mean, stddev);
-
-
-    std::cout << "mean" <<mean << std::endl;
-    std::cout << "stdev" <<stddev << std::endl;
-
-
-
-
     /// Split the image into different channels
     vector<Mat> rgbChannels(3);
     ii = 5;
@@ -327,6 +321,7 @@ int main(int argc, char *argv[])
         channels.push_back(rgbChannels[2]);
 
         merge(channels, fin_img);
+        blur( fin_img, fin_img, Size( 10, 10 ));
         fin_img.convertTo(fin_img, CV_8UC3);
 
     }
@@ -359,7 +354,9 @@ int main(int argc, char *argv[])
         if(c=='6') cropRect.x++;
         if(c=='4') cropRect.x--;
         if(c=='8') std::cout<< w.ROII  << std::endl; //cropRect.y--;
-        if(c=='2') cropRect.y++;
+        if(c=='2') std::cout << "Mean: " << meann << std::endl << "   StdDev: " << stddev << std::endl;
+            //cerr << meann << " " << stddev << endl;
+          //std::cout<< Histogram[0]; //std::cout<< w.Instance  << std::endl; //cropRect.y++;
 
         if(c=='w') { cropRect.y--; cropRect.height++;}
         if(c=='d') cropRect.width++;
