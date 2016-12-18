@@ -27,20 +27,39 @@ int main(int argc, char *argv[])
 */
 
 
-Mat src,img,ROI;
+Mat src,img,ROI, src_original, src_gray, src_threshed;
 Rect cropRect(0,0,0,0);
 Point P1(0,0);
 Point P2(0,0);
 int Window = 80 ;
+int const MaxThresh = 255;
+
 
 const char* winName="Crop Image";
 bool clicked=false;
 int i=0;
 char imgName[15];
-vector<Mat> Histogram(3);
 //cv::Scalar     meann;
 //cv::Scalar     stddev;
 Mat meann(1,4,CV_64F),stddev(1,4,CV_64F);
+
+
+
+std::vector<Mat> Hist_current(3);
+//std::vector<Mat> Hist_BackGb(1);
+//std::vector<Mat> Hist_Obj1(1);
+//std::vector<Mat> Hist_Obj2(1);
+
+void subHistogram(std::vector<Mat>& Histogram)
+{
+    
+
+
+}
+
+
+
+
 
 void showHistogram(Mat& ROI)
 {
@@ -66,7 +85,7 @@ void showHistogram(Mat& ROI)
             }
         }
     }
-    //Histogram = hist;
+    Hist_current = hist;
 
     // For each histogram arrays, obtain the maximum (peak) value
     // Needed to normalize the display later
@@ -133,7 +152,7 @@ void showImage()
         ROI=img(cropRect);
         meanStdDev(ROI, meann, stddev);
         namedWindow("Cropped",WINDOW_NORMAL);
-        resizeWindow("Cropped", Window*2, Window*2);
+        resizeWindow("Cropped", Window*4, Window*4);
         imshow("Cropped",ROI);
         showHistogram(ROI);
     }
@@ -246,6 +265,7 @@ int main(int argc, char *argv[])
     std::string filename2 = filename.toStdString();
     //src=imread("/home/yjon701/Documents/ImageProcessing/2MicroBeed_Fresh_Transmission_Green.jpg",1);
     src = imread(filename2);
+    src_original = src;
 
     setMouseCallback(winName,onMouse,NULL );
     resizeWindow(winName, 558, 420);
@@ -285,7 +305,7 @@ int main(int argc, char *argv[])
     }
     */
 
-    int ii = 300 ;
+    int ii = 500 ;
     blur( src2, img_background2, Size( ii, ii ));
     blur( img_background2, img_background2, Size( ii, ii ));
     img_clean2 = src2 - img_background2;
@@ -321,7 +341,7 @@ int main(int argc, char *argv[])
         channels.push_back(rgbChannels[2]);
 
         merge(channels, fin_img);
-        blur( fin_img, fin_img, Size( 10, 10 ));
+        //blur( fin_img, fin_img, Size( 10, 10 ));
         fin_img.convertTo(fin_img, CV_8UC3);
 
     }
@@ -340,6 +360,8 @@ int main(int argc, char *argv[])
     imshow( "RawImage", src );
     waitKey(2000);
     src = fin_img;
+    cvtColor( src, src_gray, CV_BGR2GRAY );
+    src = src_gray;
 
     while(1)
     {
@@ -367,6 +389,8 @@ int main(int argc, char *argv[])
         if(c=='h') cropRect.width--;
         if(c=='b') cropRect.height--;
         if(c=='f') { cropRect.x++; cropRect.width--;}
+        if(c=='r') {cvtColor( fin_img, src, CV_BGR2GRAY );}
+        if(c=='t') {threshold( src_gray, src, w.ThreshVale, MaxThresh, w.Instance );}
 
         if(c==27) break;
         if(c=='r') {cropRect.x=0;cropRect.y=0;cropRect.width=0;cropRect.height=0;}
