@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>169</width>
-    <height>293</height>
+    <width>225</width>
+    <height>369</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,6 +28,33 @@
     <item>
      <widget class="QLineEdit" name="InputROI"/>
     </item>
+    <item>
+     <widget class="QRadioButton" name="radioButton">
+      <property name="text">
+       <string>Object Type 1</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="radioButton_2">
+      <property name="text">
+       <string>Oject Type 2</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="radioButton_3">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Background</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -35,7 +62,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>169</width>
+     <width>225</width>
      <height>19</height>
     </rect>
    </property>
@@ -51,6 +78,13 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>Replica</tabstop>
+  <tabstop>ROI</tabstop>
+  <tabstop>InputROI</tabstop>
+  <tabstop>radioButton_2</tabstop>
+  <tabstop>radioButton_3</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
