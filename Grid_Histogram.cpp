@@ -56,9 +56,7 @@ std::vector<Mat> BackGround_mean(maxNumSamples), BackGround_stddev(maxNumSamples
 
 
 std::vector<Mat> Hist_current(1);
-//std::vector<Mat> Hist_BackGb(1);
-//std::vector<Mat> Hist_Obj1(1);
-//std::vector<Mat> Hist_Obj2(1);
+
 
 void showHistogram();
 
@@ -67,13 +65,13 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
 {
     Mat Object1_Avg;
     Object1_Avg = cv::Mat::zeros(Object1_array[0].size(), CV_32F);
-    //Object1_array[1].convertTo(Object1_Avg, CV_32FC1);
+
     Mat Object2_Avg;
     Object2_Avg = cv::Mat::zeros(Object2_array[0].size(), CV_32F);
-    //Object2_array[1].convertTo(Object2_Avg, CV_32FC1);
+
     Mat BackGround_Avg;
     BackGround_Avg = cv::Mat::zeros(BackGround_array[0].size(), CV_32F);
-    //BackGround_array[1].convertTo(BackGround_Avg, CV_32FC1);
+
     Mat Stack;
     Stack = cv::Mat::zeros(BackGround_array[1].size(),  CV_32F) ;
 
@@ -99,11 +97,7 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
             cv::add(Object1_hist[i], Object1_hist_Av[0], Object1_hist_Av[0]) ;
             cout << Object1_hist_Av[0] << endl;
         }
-        //cv::divide(Object1_array2[Object1_Index + 1], Object1_Index, Object1_array2[Object1_Index + 1]);
         cv::divide(Object1_hist_Av[0], ((Object1_hist_Av[0]*0) + Object1_Index), Object1_hist_Av[0], 1);
-        //cv::divide(Object1_Avg, Object1_Index, Object1_Avg, 1);
-
-        //Object1_Avg = Object1_Avg / Object1_Index;
         cout << Object1_hist_Av[0] << endl;
         namedWindow("AvObj1",WINDOW_NORMAL);
         resizeWindow("AvObj1", Window*4, Window*4);
@@ -119,31 +113,55 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
     {
         for (int i = 0; i < Object2_Index; i++)
         {
+            std::cout << Stack.channels() << endl;
+            std::cout << Object2_Avg.channels() << endl;
             meanStdDev(Object2_array[i], Object2_mean[i], Object2_stddev[i]);
             Object2_array[i].convertTo(Stack, CV_32F);
-            cv::accumulate(Stack, Object2_Avg);
+
+            cout << Stack.size() << endl ;
+            cout << Object2_array[i].size() << endl ;
+            cout << Object2_Avg.size() << endl;
+
+            cout << Object2_hist_Av[0] << endl;
+            cout << Object2_hist[i] << endl;
+            cv::add(Object2_hist[i], Object2_hist_Av[0], Object2_hist_Av[0]) ;
+            cout << Object2_hist_Av[0] << endl;
         }
-        Object2_Avg = Object2_Avg / Object2_Index;
-        namedWindow("AvObj2",WINDOW_NORMAL);
-        resizeWindow("AvObj2", Window*4, Window*4);
+        cv::divide(Object2_hist_Av[0], ((Object2_hist_Av[0]*0) + Object2_Index), Object2_hist_Av[0], 1);
+        cout << Object2_hist_Av[0] << endl;
+        namedWindow("AvObj1",WINDOW_NORMAL);
+        resizeWindow("AvObj1", Window*4, Window*4);
         Object2_Avg.convertTo(Object2_Avg, CV_8UC1);
-        imshow("AvObj2",Object2_Avg);
+        imshow("AvObj1",Object2_Avg);
+        ROI = Object2_Avg;
+        showHistogram();
+        cv::waitKey(4000);
     }
 
     if (BackGround_Index > 0)
     {
         for (int i = 0; i < BackGround_Index; i++)
         {
+            std::cout << Stack.channels() << endl;
+            std::cout << BackGround_Avg.channels() << endl;
             meanStdDev(BackGround_array[i], BackGround_mean[i], BackGround_stddev[i]);
-            std::cout << "Mean: " << BackGround_mean[i] << std::endl << "   StdDev: " << BackGround_stddev[i] << std::endl;
             BackGround_array[i].convertTo(Stack, CV_32F);
-            cv::accumulate(Stack, BackGround_Avg);
+
+            cout << Stack.size() << endl ;
+            cout << BackGround_array[i].size() << endl ;
+            cout << BackGround_Avg.size() << endl;
+
+            cout << BackGround_hist_Av[0] << endl;
+            cout << BackGround_hist[i] << endl;
+            cv::add(BackGround_hist[i], BackGround_hist_Av[0], BackGround_hist_Av[0]) ;
+            cout << BackGround_hist_Av[0] << endl;
         }
-        BackGround_Avg = BackGround_Avg / BackGround_Index;
-        namedWindow("AvBkGr",WINDOW_NORMAL);
-        resizeWindow("AvBkgr", Window*4, Window*4);
+        cv::divide(BackGround_hist_Av[0], ((BackGround_hist_Av[0]*0) + BackGround_Index), BackGround_hist_Av[0], 1);
+        cout << BackGround_hist_Av[0] << endl;
+        namedWindow("AvObj1",WINDOW_NORMAL);
+        resizeWindow("AvObj1", Window*4, Window*4);
         BackGround_Avg.convertTo(BackGround_Avg, CV_8UC1);
-        imshow("AvBkGr",BackGround_Avg);
+        imshow("AvObj1",BackGround_Avg);
         ROI = BackGround_Avg;
         showHistogram();
         cv::waitKey(4000);
@@ -477,7 +495,8 @@ int main(int argc, char *argv[])
         if(c=='6') cropRect.x++;
         if(c=='4') cropRect.x--;
         if(c=='8') std::cout<< w.ROII  << std::endl; //cropRect.y--;
-        if(c=='2') std::cout << "Mean: " << meann << std::endl << "   StdDev: " << stddev << std::endl;
+        if(c=='2') {double minn, maxx; cv::minMaxLoc(Hist_current[0], &minn, &maxx); cout << "Min: " << minn  << " Max: " << maxx << endl;}
+            //std::cout << "Mean: " << meann << std::endl << "   StdDev: " << stddev << std::endl;
             //cerr << meann << " " << stddev << endl;
           //std::cout<< Histogram[0]; //std::cout<< w.Instance  << std::endl; //cropRect.y++;
         if(c=='3')
