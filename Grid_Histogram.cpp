@@ -31,7 +31,7 @@ Mat src,img,ROI, src_original, src_gray, src_threshed;
 Rect cropRect(0,0,0,0);
 Point P1(0,0);
 Point P2(0,0);
-int Window = 80 ;
+int Window = 100 ;
 int const MaxThresh = 255;
 
 
@@ -43,69 +43,110 @@ char imgName[15];
 //cv::Scalar     stddev;
 Mat meann(1,4,CV_64F),stddev(1,4,CV_64F);
 
-Mat Object1_array[10];
-Mat Object2_array[10];
-Mat BackGround_array[10];
+const int maxNumSamples = 10;
+Mat Object1_array[maxNumSamples];
+std::vector<Mat> Object1_mean(maxNumSamples), Object1_stddev(maxNumSamples), Object1_hist(maxNumSamples), Object1_hist_Av(1);
 
 
-std::vector<Mat> Hist_current(3);
+Mat Object2_array[maxNumSamples];
+std::vector<Mat> Object2_mean(maxNumSamples), Object2_stddev(maxNumSamples), Object2_hist(maxNumSamples), Object2_hist_Av(1);
+
+Mat BackGround_array[maxNumSamples];
+std::vector<Mat> BackGround_mean(maxNumSamples), BackGround_stddev(maxNumSamples), BackGround_hist(maxNumSamples), BackGround_hist_Av(1);
+
+
+std::vector<Mat> Hist_current(1);
 //std::vector<Mat> Hist_BackGb(1);
 //std::vector<Mat> Hist_Obj1(1);
 //std::vector<Mat> Hist_Obj2(1);
 
+void showHistogram();
+
+
 void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
 {
     Mat Object1_Avg;
-    Object1_Avg = cv::Mat::zeros(Object1_array[1].size(), CV_32FC1);
+    Object1_Avg = cv::Mat::zeros(Object1_array[0].size(), CV_32F);
     //Object1_array[1].convertTo(Object1_Avg, CV_32FC1);
     Mat Object2_Avg;
-    Object2_Avg = cv::Mat::zeros(Object2_array[1].size(), CV_32FC1);
+    Object2_Avg = cv::Mat::zeros(Object2_array[0].size(), CV_32F);
     //Object2_array[1].convertTo(Object2_Avg, CV_32FC1);
     Mat BackGround_Avg;
-    BackGround_Avg = cv::Mat::zeros(BackGround_array[1].size(), CV_32FC1);
+    BackGround_Avg = cv::Mat::zeros(BackGround_array[0].size(), CV_32F);
     //BackGround_array[1].convertTo(BackGround_Avg, CV_32FC1);
     Mat Stack;
-    Stack = cv::Mat::zeros(BackGround_array[1].size(),  CV_32FC1) ;
+    Stack = cv::Mat::zeros(BackGround_array[1].size(),  CV_32F) ;
+
+    Object1_hist_Av[0] = Mat::zeros(1, 256, CV_32SC1);
+    Object2_hist_Av[0] = Mat::zeros(1, 256, CV_32SC1);
+    BackGround_hist_Av[0] = Mat::zeros(1, 256, CV_32SC1);
 
     if (Object1_Index > 0)
     {
         for (int i = 0; i < Object1_Index; i++)
         {
-            //std::cout << Stack.channels() << endl;
-            //std::cout << Object1_Avg.channels() << endl;
-            Object1_array[i].convertTo(Stack, CV_32FC1);
-            //Object1_array[i].convertTo(Object1_array2[i], CV_32FC1);
-            //Object1_array2[Object1_Index + 1] = Object1_array2[Object1_Index + 1] + Object1_array2[i];
-            //cout << BackGround_array[1].size() <<endl;
-            //cout << Stack.size() << endl ;
-            //cout << Object1_array[i].size() << endl ;
-            //cout << Stack << endl ;
-            //cout << Object1_array[i] << endl ;
-            cv::accumulate(Stack, Object1_Avg);
+            std::cout << Stack.channels() << endl;
+            std::cout << Object1_Avg.channels() << endl;
+            meanStdDev(Object1_array[i], Object1_mean[i], Object1_stddev[i]);
+            Object1_array[i].convertTo(Stack, CV_32F);
 
+            cout << Stack.size() << endl ;
+            cout << Object1_array[i].size() << endl ;
+            cout << Object1_Avg.size() << endl;
+
+            cout << Object1_hist_Av[0] << endl;
+            cout << Object1_hist[i] << endl;
+            cv::add(Object1_hist[i], Object1_hist_Av[0], Object1_hist_Av[0]) ;
+            cout << Object1_hist_Av[0] << endl;
         }
         //cv::divide(Object1_array2[Object1_Index + 1], Object1_Index, Object1_array2[Object1_Index + 1]);
-        Object1_Avg = Object1_Avg / Object1_Index;
+        cv::divide(Object1_hist_Av[0], ((Object1_hist_Av[0]*0) + Object1_Index), Object1_hist_Av[0], 1);
+        //cv::divide(Object1_Avg, Object1_Index, Object1_Avg, 1);
+
+        //Object1_Avg = Object1_Avg / Object1_Index;
+        cout << Object1_hist_Av[0] << endl;
+        namedWindow("AvObj1",WINDOW_NORMAL);
+        resizeWindow("AvObj1", Window*4, Window*4);
+        Object1_Avg.convertTo(Object1_Avg, CV_8UC1);
+        imshow("AvObj1",Object1_Avg);
+        ROI = Object1_Avg;
+        showHistogram();
+        cv::waitKey(4000);
+
     }
 
     if (Object2_Index > 0)
     {
         for (int i = 0; i < Object2_Index; i++)
         {
-            Object2_array[i].convertTo(Stack, CV_32FC1);
+            meanStdDev(Object2_array[i], Object2_mean[i], Object2_stddev[i]);
+            Object2_array[i].convertTo(Stack, CV_32F);
             cv::accumulate(Stack, Object2_Avg);
         }
         Object2_Avg = Object2_Avg / Object2_Index;
+        namedWindow("AvObj2",WINDOW_NORMAL);
+        resizeWindow("AvObj2", Window*4, Window*4);
+        Object2_Avg.convertTo(Object2_Avg, CV_8UC1);
+        imshow("AvObj2",Object2_Avg);
     }
 
     if (BackGround_Index > 0)
     {
         for (int i = 0; i < BackGround_Index; i++)
         {
-            BackGround_array[i].convertTo(Stack, CV_32FC1);
+            meanStdDev(BackGround_array[i], BackGround_mean[i], BackGround_stddev[i]);
+            std::cout << "Mean: " << BackGround_mean[i] << std::endl << "   StdDev: " << BackGround_stddev[i] << std::endl;
+            BackGround_array[i].convertTo(Stack, CV_32F);
             cv::accumulate(Stack, BackGround_Avg);
         }
         BackGround_Avg = BackGround_Avg / BackGround_Index;
+        namedWindow("AvBkGr",WINDOW_NORMAL);
+        resizeWindow("AvBkgr", Window*4, Window*4);
+        BackGround_Avg.convertTo(BackGround_Avg, CV_8UC1);
+        imshow("AvBkGr",BackGround_Avg);
+        ROI = BackGround_Avg;
+        showHistogram();
+        cv::waitKey(4000);
     }
 }
 
@@ -136,7 +177,7 @@ void showHistogram()
             }
         }
     }
-    Hist_current = hist;
+    Hist_current[0] = hist[0];
 
     // For each histogram arrays, obtain the maximum (peak) value
     // Needed to normalize the display later
@@ -275,8 +316,6 @@ void onMouse( int event, int x, int y, int f, void* )
 
     }
 
-    cout << ROI << endl;
-    cout << "Step 2" << endl;
     showImage();
 
 
@@ -426,8 +465,9 @@ int main(int argc, char *argv[])
 
     while(1)
     {
-        Window = w.ROII;
+
         char c=waitKey();
+        Window = w.ROII;
         if(c=='s'&&ROI.data)
         {
              sprintf(imgName,"%d.jpg",i++);
@@ -447,21 +487,26 @@ int main(int argc, char *argv[])
                 case  1:
                 {
                     Object1_array[w.Object1_Index] = ROI;
+                    Object1_hist[w.Object1_Index] = Mat::zeros(1, 256, CV_32SC1);
+                    Object1_hist[w.Object1_Index] = Hist_current[0];
+
                     w.Object1_Index++;
                     break;
                 }
                 case  2:
                 {
                     Object2_array[w.Object2_Index] = ROI;
+                    Object2_hist[w.Object2_Index] = Mat::zeros(1, 256, CV_32SC1);
+                    Object2_hist[w.Object2_Index] = Hist_current[0];
                     w.Object2_Index++;
                     break;
                 }
                 case  3:
                 {
                     BackGround_array[w.BackGround_Index] = ROI;
-                    cout << BackGround_array[w.BackGround_Index] << endl;
-                    cout << ROI << endl;
-                    cout << "Step 3" << endl;
+                    BackGround_hist[w.BackGround_Index] = Mat::zeros(1, 256, CV_32SC1);
+                    BackGround_hist[w.BackGround_Index] = Hist_current[0];
+                    //cout << BackGround_array[w.BackGround_Index] << endl;
                     w.BackGround_Index++;
                     break;
                 }
