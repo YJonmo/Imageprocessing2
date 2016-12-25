@@ -44,16 +44,18 @@ char imgName[15];
 Mat meann(1,1,CV_64F),stddev(1,1,CV_64F);
 
 const int maxNumSamples = 10;
-Mat Object1_array[maxNumSamples];
+Mat Object1_array[maxNumSamples], Object1_array_Threshed[maxNumSamples];
 std::vector<Mat> Object1_mean(maxNumSamples), Object1_stddev(maxNumSamples),Object1_hist(maxNumSamples);
 std::vector<Mat> Object1_hist_Av(1);
+int No_Object1;
 
 
-Mat Object2_array[maxNumSamples];
+Mat Object2_array[maxNumSamples], Object2_array_Threshed[maxNumSamples];
 std::vector<Mat> Object2_mean(maxNumSamples), Object2_stddev(maxNumSamples), Object2_hist(maxNumSamples);
 std::vector<Mat> Object2_hist_Av(1);
+int No_Object2;
 
-Mat BackGround_array[maxNumSamples];
+Mat BackGround_array[maxNumSamples], BackGround_array_Threshed[maxNumSamples];
 std::vector<Scalar> BackGround_mean(maxNumSamples) , BackGround_stddev(maxNumSamples);
 double Min_BkGn_mean, Max_BkGn_mean, Max_BkGn_STD, Min_BkGn_STD;
 std::vector<Mat> BackGround_hist_Av(1), BackGround_hist(maxNumSamples);
@@ -63,6 +65,53 @@ std::vector<Mat> Hist_current(1);
 
 void showHistogram();
 
+void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, int Thresh_Type)
+{
+
+    int Obj1_Blk_Pix = 0;
+    int Obj2_Blk_Pix = 0;
+    int BkGr_Blk_Pix = 0;
+    int  src_Blk_Pix = 0;
+    No_Object1 = 0;
+    No_Object2 = 0;
+    cout << "Object1_Index: " << Object1_Index ;
+    for(int ii = 0; ii < Object1_Index; ii++)
+    {
+        threshold( Object1_array[ii], Object1_array_Threshed[ii], (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, Thresh_Type );
+        for (int i = 0; i < Object1_array_Threshed[ii].rows; i++)
+        {
+            for (int j = 0; j < Object1_array_Threshed[ii].cols; j++)
+            {
+                //if ( src.at<cv::Vec3b>(y,x) == cv::Vec3b(255,255,255) ) Count_Black++;
+                if (Object1_array[ii].at<uchar>(i,j) == 0) Obj1_Blk_Pix++;
+            }
+        }
+    }
+    cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
+    Obj1_Blk_Pix = Obj1_Blk_Pix/Object1_Index;
+    cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
+
+    for(int ii = 0; ii < Object2_Index; ii++)
+    {
+        threshold( Object2_array[ii], Object2_array_Threshed[ii], (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, Thresh_Type );
+    }
+
+    for(int ii = 0; ii < BackGround_Index; ii++)
+    {
+        threshold( BackGround_array[ii], BackGround_array_Threshed[ii], (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, Thresh_Type );
+    }
+
+
+    for (int i = 0; i < src.rows; i++)
+    {
+        for (int j = 0; j < src.cols; j++)
+        {
+            //if ( src.at<cv::Vec3b>(y,x) == cv::Vec3b(255,255,255) ) Count_Black++;
+            if (src.at<uchar>(i,j) == 0) src_Blk_Pix++;
+        }
+    }
+    cout << " src_Blk_Pix: " << src_Blk_Pix << endl;
+}
 
 
 void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
@@ -406,7 +455,7 @@ int main(int argc, char *argv[])
     src_original = src;
 
     setMouseCallback(winName,onMouse,NULL );
-    resizeWindow(winName, 558, 420);
+    resizeWindow(winName, 658, 520);
     imshow(winName,src);
 
 
@@ -563,8 +612,17 @@ int main(int argc, char *argv[])
         if(c=='4')
         {
             MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
-
         }
+
+        if(c=='c')
+        {
+            countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 3);
+        }
+        if(c=='v')
+        {
+            countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 4);
+        }
+        /*
         if(c=='w') { cropRect.y--; cropRect.height++;}
         if(c=='d') cropRect.width++;
         if(c=='x') cropRect.height++;
@@ -574,6 +632,7 @@ int main(int argc, char *argv[])
         if(c=='h') cropRect.width--;
         if(c=='b') cropRect.height--;
         if(c=='f') { cropRect.x++; cropRect.width--;}
+        */
         if(c=='r') {cvtColor( fin_img, src, CV_BGR2GRAY );}         // resets
         if(c=='t') {threshold( src_gray, src, w.ThreshVale, MaxThresh, w.Instance );}
 
