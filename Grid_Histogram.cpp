@@ -41,19 +41,22 @@ int i=0;
 char imgName[15];
 //cv::Scalar     meann;
 //cv::Scalar     stddev;
-Mat meann(1,4,CV_64F),stddev(1,4,CV_64F);
+Mat meann(1,1,CV_64F),stddev(1,1,CV_64F);
 
 const int maxNumSamples = 10;
 Mat Object1_array[maxNumSamples];
-std::vector<Mat> Object1_mean(maxNumSamples), Object1_stddev(maxNumSamples), Object1_hist(maxNumSamples), Object1_hist_Av(1);
+std::vector<Mat> Object1_mean(maxNumSamples), Object1_stddev(maxNumSamples),Object1_hist(maxNumSamples);
+std::vector<Mat> Object1_hist_Av(1);
 
 
 Mat Object2_array[maxNumSamples];
-std::vector<Mat> Object2_mean(maxNumSamples), Object2_stddev(maxNumSamples), Object2_hist(maxNumSamples), Object2_hist_Av(1);
+std::vector<Mat> Object2_mean(maxNumSamples), Object2_stddev(maxNumSamples), Object2_hist(maxNumSamples);
+std::vector<Mat> Object2_hist_Av(1);
 
 Mat BackGround_array[maxNumSamples];
-std::vector<Mat> BackGround_mean(maxNumSamples), BackGround_stddev(maxNumSamples), BackGround_hist(maxNumSamples), BackGround_hist_Av(1);
-
+std::vector<Scalar> BackGround_mean(maxNumSamples) , BackGround_stddev(maxNumSamples);
+double Min_BkGn_mean, Max_BkGn_mean, Max_BkGn_STD, Min_BkGn_STD;
+std::vector<Mat> BackGround_hist_Av(1), BackGround_hist(maxNumSamples);
 
 std::vector<Mat> Hist_current(1);
 
@@ -61,8 +64,10 @@ std::vector<Mat> Hist_current(1);
 void showHistogram();
 
 
+
 void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
 {
+
     Mat Object1_Avg;
     Object1_Avg = cv::Mat::zeros(Object1_array[0].size(), CV_32F);
 
@@ -73,7 +78,7 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
     BackGround_Avg = cv::Mat::zeros(BackGround_array[0].size(), CV_32F);
 
     Mat Stack;
-    Stack = cv::Mat::zeros(BackGround_array[1].size(),  CV_32F) ;
+    Stack = cv::Mat::zeros(BackGround_array[0].size(),  CV_32F) ;
 
     Object1_hist_Av[0] = Mat::zeros(1, 256, CV_32SC1);
     Object2_hist_Av[0] = Mat::zeros(1, 256, CV_32SC1);
@@ -105,7 +110,7 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
         imshow("AvObj1",Object1_Avg);
         ROI = Object1_Avg;
         showHistogram();
-        cv::waitKey(4000);
+        cv::waitKey(200);
 
     }
 
@@ -135,7 +140,7 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
         imshow("AvObj1",Object2_Avg);
         ROI = Object2_Avg;
         showHistogram();
-        cv::waitKey(4000);
+        cv::waitKey(122);
     }
 
     if (BackGround_Index > 0)
@@ -144,7 +149,7 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
         {
             std::cout << Stack.channels() << endl;
             std::cout << BackGround_Avg.channels() << endl;
-            meanStdDev(BackGround_array[i], BackGround_mean[i], BackGround_stddev[i]);
+            cv::meanStdDev(BackGround_array[i], BackGround_mean.at(i), BackGround_stddev.at(i));
             BackGround_array[i].convertTo(Stack, CV_32F);
 
             cout << Stack.size() << endl ;
@@ -165,6 +170,27 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
         ROI = BackGround_Avg;
         showHistogram();
         cv::waitKey(4000);
+
+
+        for (unsigned ii=0; ii <BackGround_Index; ii++)
+        {
+            std::cout << ' ' << BackGround_mean.at(ii)<< endl;
+                 cout << BackGround_mean.size() << endl;
+        }
+        std::cout << '\n';
+        cout << BackGround_mean.size() << endl;
+        //cout << BackGround_mean << endl;
+        std::vector<double> Stack(BackGround_Index);
+        for(int i=0; i < BackGround_Index; i++)
+        {
+            Stack[i] = BackGround_mean[i][0];
+        }
+        cv::minMaxLoc(Stack, &Min_BkGn_mean, &Max_BkGn_mean);
+        cv::minMaxLoc(BackGround_stddev, &Min_BkGn_STD, &Max_BkGn_STD);
+        cout << "Min: " << Min_BkGn_mean  << " Max: " << Max_BkGn_mean << endl;
+        cout << "Min: " << Min_BkGn_STD  << " Max: " << Max_BkGn_STD << endl;
+
+
     }
 }
 
@@ -455,7 +481,7 @@ int main(int argc, char *argv[])
         channels.push_back(rgbChannels[2]);
 
         merge(channels, fin_img);
-        //blur( fin_img, fin_img, Size( 10, 10 ));
+        blur( fin_img, fin_img, Size( 4, 4 ));
         fin_img.convertTo(fin_img, CV_8UC3);
 
     }
@@ -495,7 +521,9 @@ int main(int argc, char *argv[])
         if(c=='6') cropRect.x++;
         if(c=='4') cropRect.x--;
         if(c=='8') std::cout<< w.ROII  << std::endl; //cropRect.y--;
-        if(c=='2') {double minn, maxx; cv::minMaxLoc(Hist_current[0], &minn, &maxx); cout << "Min: " << minn  << " Max: " << maxx << endl;}
+        if(c=='2')
+        {double minn, maxx; cv::minMaxLoc(Hist_current[0], &minn, &maxx);
+            cout << "Min: " << minn  << " Max: " << maxx << endl;}
             //std::cout << "Mean: " << meann << std::endl << "   StdDev: " << stddev << std::endl;
             //cerr << meann << " " << stddev << endl;
           //std::cout<< Histogram[0]; //std::cout<< w.Instance  << std::endl; //cropRect.y++;
@@ -546,11 +574,17 @@ int main(int argc, char *argv[])
         if(c=='h') cropRect.width--;
         if(c=='b') cropRect.height--;
         if(c=='f') { cropRect.x++; cropRect.width--;}
-        if(c=='r') {cvtColor( fin_img, src, CV_BGR2GRAY );}
+        if(c=='r') {cvtColor( fin_img, src, CV_BGR2GRAY );}         // resets
         if(c=='t') {threshold( src_gray, src, w.ThreshVale, MaxThresh, w.Instance );}
 
+        if(c=='m'){
+        int threshh = (Min_BkGn_mean - Max_BkGn_STD*2) ;
+        cout << "threshh: " << threshh << endl;}
+        if(c=='9') {threshold( src_gray, src, (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, w.Instance );}
+        if(c=='0') {threshold( src_gray, src, (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, 4 );}
+
         if(c==27) break;
-        if(c=='r') {cropRect.x=0;cropRect.y=0;cropRect.width=0;cropRect.height=0;}
+        //if(c=='r') {cropRect.x=0;cropRect.y=0;cropRect.width=0;cropRect.height=0;}
         showImage();
     }
     //return a.exec();
