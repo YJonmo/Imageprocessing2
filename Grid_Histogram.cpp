@@ -64,6 +64,78 @@ std::vector<Mat> Hist_current(1);
 
 
 void showHistogram();
+void showImage();
+
+void showGrids(int Grid_Size, int Obj1_Blk_Pix)
+{
+    int No_Rows = src.rows/Grid_Size;
+    int No_Cols= src.cols/Grid_Size;
+    int  src_Blk_Pix = 0;
+
+    int TextOffset_X = Grid_Size/10;
+    int TextOffset_Y = Grid_Size/3;
+    cv::Point TextOrig (TextOffset_X, TextOffset_Y);
+    cv::Point2i p1, p2;
+    //cv::Point2i p1(1, 1 + Grid_Size);
+    //cv::Point2i p2(src.cols, 1 + Grid_Size);
+    //cv::line(src, p1, p2, cv::Scalar(255,255,255), 5, CV_AA); // 1 pixel thick, CV_AA == Anti-aliased flag
+
+    p1.x = 1; p1.y = 1;
+    p2.x = src.cols; p2.y = 1;
+    for (int Row_Ind = 0; Row_Ind <= No_Rows; Row_Ind++)
+    {
+        TextOrig.y = TextOffset_Y + Grid_Size*Row_Ind;
+        p1.y = 1 + Grid_Size*Row_Ind;
+        p2.y = 1 + Grid_Size*Row_Ind;
+        cv::line(src, p1, p2, cv::Scalar(255,255,255), 3, CV_AA); // 1 pixel thick, CV_AA == Anti-aliased flag
+        showImage();
+        for (int Col_Ind = 0; Col_Ind <= No_Cols; Col_Ind++)
+        {
+
+
+            src_Blk_Pix = 0;
+            for (int i = (p1.y - Grid_Size*Row_Ind); i < p1.y; i++)
+            {
+                for (int j = p1.x + Grid_Size*Col_Ind; j < (p1.x + Grid_Size*(Col_Ind + 1)); j++)
+                {
+                    //if ( src.at<cv::Vec3b>(y,x) == cv::Vec3b(255,255,255) ) Count_Black++;
+                    if (src.at<uchar>(i,j) == 0) src_Blk_Pix++;
+                }
+            }
+
+            cout << "Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
+            cout << "src_Blk_Pix:" << src_Blk_Pix << endl;
+
+            TextOrig.x = TextOffset_X + Grid_Size*Col_Ind;
+            cv::putText(src, std::to_string(src_Blk_Pix/Obj1_Blk_Pix), TextOrig, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar (255,255,255), 3, 8 );
+            /*
+            cv::Point TextOrig2;
+            TextOrig2.x = TextOrig.x;
+            TextOrig2.y = TextOrig.y +20;
+            cv::putText(src, std::to_string(TextOrig.y), TextOrig2, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar (255,255,255), 3, 8 );
+            */
+            showImage();
+            cv::waitKey(11);
+        }
+
+
+    }
+
+    //cv::putText(src, " text", TextOrig, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar (255,255,255), 3, 8 );
+    //(img, text, Point org, fontFace, fontScale, color, thickness=1, lineType=8, bool bottomLeftOrigin=false )
+
+
+    for (int Col_Ind = 1; Col_Ind <= No_Cols; Col_Ind++)
+    {
+        cv::Point2i p1(1 + Grid_Size*Col_Ind, 1);
+        cv::Point2i p2(1 + Grid_Size*Col_Ind, src.rows);
+        cv::line(src, p1, p2, cv::Scalar(255,255,255), 3, CV_AA); // 1 pixel thick, CV_AA == Anti-aliased flag
+    }
+
+
+}
+
+
 
 void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, int Thresh_Type)
 {
@@ -88,7 +160,7 @@ void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, in
         }
     }
     cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
-    Obj1_Blk_Pix = Obj1_Blk_Pix/Object1_Index;
+    Obj1_Blk_Pix = Obj1_Blk_Pix/Object1_Index;         //Average number of the pixels belonging to the Object1
     cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
 
     for(int ii = 0; ii < Object2_Index; ii++)
@@ -110,7 +182,10 @@ void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, in
             if (src.at<uchar>(i,j) == 0) src_Blk_Pix++;
         }
     }
-    cout << " src_Blk_Pix: " << src_Blk_Pix << endl;
+    cout << "src_Blk_Pix: " << src_Blk_Pix << endl;   //Number of the pixels passed the threshold
+    cout << "Number of Object 1: " << (src_Blk_Pix/Obj1_Blk_Pix) << endl; //Number of Object1
+
+    //showGrids(Obj1_Blk_Pix);
 }
 
 
@@ -570,9 +645,10 @@ int main(int argc, char *argv[])
         if(c=='6') cropRect.x++;
         if(c=='4') cropRect.x--;
         if(c=='8') std::cout<< w.ROII  << std::endl; //cropRect.y--;
-        if(c=='2')
-        {double minn, maxx; cv::minMaxLoc(Hist_current[0], &minn, &maxx);
-            cout << "Min: " << minn  << " Max: " << maxx << endl;}
+        if(c=='2') showGrids(250,22);
+
+        /*{double minn, maxx; cv::minMaxLoc(Hist_current[0], &minn, &maxx);
+            cout << "Min: " << minn  << " Max: " << maxx << endl;}*/
             //std::cout << "Mean: " << meann << std::endl << "   StdDev: " << stddev << std::endl;
             //cerr << meann << " " << stddev << endl;
           //std::cout<< Histogram[0]; //std::cout<< w.Instance  << std::endl; //cropRect.y++;
