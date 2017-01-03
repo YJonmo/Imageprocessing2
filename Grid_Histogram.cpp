@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 */
 
 
-Mat src,img,ROI, src_original, src_gray, src_threshed;
+Mat src, src2, img,ROI, src_temp, src_original, src_gray, src_threshed;
 Rect cropRect(0,0,0,0);
 Point P1(0,0);
 Point P2(0,0);
@@ -48,6 +48,7 @@ Mat Object1_array[maxNumSamples], Object1_array_Threshed[maxNumSamples];
 std::vector<Mat> Object1_mean(maxNumSamples), Object1_stddev(maxNumSamples),Object1_hist(maxNumSamples);
 std::vector<Mat> Object1_hist_Av(1);
 int No_Object1;
+int No_Pix1;
 
 
 Mat Object2_array[maxNumSamples], Object2_array_Threshed[maxNumSamples];
@@ -70,7 +71,12 @@ void showGrids(int Grid_Size, int Obj1_Blk_Pix)
 {
     int No_Rows = src.rows/Grid_Size;
     int No_Cols= src.cols/Grid_Size;
-    int  src_Blk_Pix = 0;
+    int  Grid_Blk_Pix = 0;
+    float Grid_Objs = 0;
+
+    src_temp = src_original.clone();
+    namedWindow("Counted",WINDOW_NORMAL);
+    resizeWindow("Counted", 800, 650);
 
     int TextOffset_X = Grid_Size/10;
     int TextOffset_Y = Grid_Size/3;
@@ -85,29 +91,30 @@ void showGrids(int Grid_Size, int Obj1_Blk_Pix)
     for (int Row_Ind = 0; Row_Ind <= No_Rows; Row_Ind++)
     {
         TextOrig.y = TextOffset_Y + Grid_Size*Row_Ind;
-        p1.y = 1 + Grid_Size*Row_Ind;
-        p2.y = 1 + Grid_Size*Row_Ind;
-        cv::line(src, p1, p2, cv::Scalar(255,255,255), 3, CV_AA); // 1 pixel thick, CV_AA == Anti-aliased flag
-        showImage();
+        p1.y = 1 + Grid_Size*(Row_Ind+1);
+        p2.y = 1 + Grid_Size*(Row_Ind+1);
+        cv::line(src_temp, p1, p2, cv::Scalar(255,255,255), 2, CV_AA); // 1 pixel thick, CV_AA == Anti-aliased flag
+        //showImage();
         for (int Col_Ind = 0; Col_Ind <= No_Cols; Col_Ind++)
         {
 
 
-            src_Blk_Pix = 0;
-            for (int i = (p1.y - Grid_Size*Row_Ind); i < p1.y; i++)
+            Grid_Blk_Pix = 0;
+            for (int i = (p1.y - Grid_Size); (i < p1.y)&(i < src.rows); i++)
             {
-                for (int j = p1.x + Grid_Size*Col_Ind; j < (p1.x + Grid_Size*(Col_Ind + 1)); j++)
+                for (int j = p1.x + Grid_Size*Col_Ind; (j < (p1.x + Grid_Size*(Col_Ind + 1)))&(j < src.cols); j++)
                 {
                     //if ( src.at<cv::Vec3b>(y,x) == cv::Vec3b(255,255,255) ) Count_Black++;
-                    if (src.at<uchar>(i,j) == 0) src_Blk_Pix++;
+                    if (src.at<uchar>(i,j) == 0) {//src.at<uchar>(i,j) = 25+30*Row_Ind;
+                        Grid_Blk_Pix++;}
                 }
             }
 
-            cout << "Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
-            cout << "src_Blk_Pix:" << src_Blk_Pix << endl;
-
+            //cout << "Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
+            //cout << "Grid_Blk_Pix:" << Grid_Blk_Pix << endl;
+            Grid_Objs = float(Grid_Blk_Pix)/float(Obj1_Blk_Pix);
             TextOrig.x = TextOffset_X + Grid_Size*Col_Ind;
-            cv::putText(src, std::to_string(src_Blk_Pix/Obj1_Blk_Pix), TextOrig, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar (255,255,255), 3, 8 );
+            cv::putText(src_temp, std::to_string(Grid_Objs), TextOrig, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar (255,255,255), 3, 8 );
             /*
             cv::Point TextOrig2;
             TextOrig2.x = TextOrig.x;
@@ -115,6 +122,8 @@ void showGrids(int Grid_Size, int Obj1_Blk_Pix)
             cv::putText(src, std::to_string(TextOrig.y), TextOrig2, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar (255,255,255), 3, 8 );
             */
             showImage();
+
+            imshow("Counted",src_temp);
             cv::waitKey(11);
         }
 
@@ -129,10 +138,10 @@ void showGrids(int Grid_Size, int Obj1_Blk_Pix)
     {
         cv::Point2i p1(1 + Grid_Size*Col_Ind, 1);
         cv::Point2i p2(1 + Grid_Size*Col_Ind, src.rows);
-        cv::line(src, p1, p2, cv::Scalar(255,255,255), 3, CV_AA); // 1 pixel thick, CV_AA == Anti-aliased flag
+        cv::line(src_temp, p1, p2, cv::Scalar(255,255,255), 2, CV_AA); // 1 pixel thick, CV_AA == Anti-aliased flag
     }
-
-
+    imshow("Counted",src_temp);
+    cv::waitKey(11);
 }
 
 
@@ -146,7 +155,7 @@ void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, in
     int  src_Blk_Pix = 0;
     No_Object1 = 0;
     No_Object2 = 0;
-    cout << "Object1_Index: " << Object1_Index ;
+    //cout << "Object1_Index: " << Object1_Index ;
     for(int ii = 0; ii < Object1_Index; ii++)
     {
         threshold( Object1_array[ii], Object1_array_Threshed[ii], (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, Thresh_Type );
@@ -159,9 +168,9 @@ void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, in
             }
         }
     }
-    cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
+    //cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
     Obj1_Blk_Pix = Obj1_Blk_Pix/Object1_Index;         //Average number of the pixels belonging to the Object1
-    cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
+    //cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
 
     for(int ii = 0; ii < Object2_Index; ii++)
     {
@@ -182,10 +191,18 @@ void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, in
             if (src.at<uchar>(i,j) == 0) src_Blk_Pix++;
         }
     }
-    cout << "src_Blk_Pix: " << src_Blk_Pix << endl;   //Number of the pixels passed the threshold
-    cout << "Number of Object 1: " << (src_Blk_Pix/Obj1_Blk_Pix) << endl; //Number of Object1
+    if (Obj1_Blk_Pix > 0)
+    {
+        No_Object1 = src_Blk_Pix/Obj1_Blk_Pix;
+        cout << "src_Blk_Pix: " << src_Blk_Pix << endl;   //Number of the pixels passed the threshold
+        cout << "Number of Object 1: " << No_Object1 << endl; //Number of Object1
+        showGrids(250, Obj1_Blk_Pix);
+    }
+    else
+    {
+        cout << "Please do thresholding before counting." << endl;
+    }
 
-    //showGrids(Obj1_Blk_Pix);
 }
 
 
@@ -503,10 +520,10 @@ int main(int argc, char *argv[])
     cout<<"Click and drag for Selection"<<endl<<endl;
     cout<<"------> Press 's' to save"<<endl<<endl;
 
-    cout<<"------> Press '8' to move up"<<endl;
-    cout<<"------> Press '2' to move down"<<endl;
-    cout<<"------> Press '6' to move right"<<endl;
-    cout<<"------> Press '4' to move left"<<endl<<endl;
+    cout<<"------> Press 'u' to move up"<<endl;
+    cout<<"------> Press 'd' to move down"<<endl;
+    cout<<"------> Press 'r' to move right"<<endl;
+    cout<<"------> Press 'l' to move left"<<endl<<endl;
 
     cout<<"------> Press 'w' increas top"<<endl;
     cout<<"------> Press 'x' increas bottom"<<endl;
@@ -543,7 +560,7 @@ int main(int argc, char *argv[])
     int Object2_Index = 0;
     int BackGround_Index = 0;
     //img_clean.create(2,2,CV_8UC3);
-    Mat src2;
+
 
     //img.create(2,2,CV_8UC1);
 
@@ -605,7 +622,7 @@ int main(int argc, char *argv[])
         channels.push_back(rgbChannels[2]);
 
         merge(channels, fin_img);
-        blur( fin_img, fin_img, Size( 4, 4 ));
+        //blur( fin_img, fin_img, Size( 2, 2 ));
         fin_img.convertTo(fin_img, CV_8UC3);
 
     }
@@ -642,8 +659,13 @@ int main(int argc, char *argv[])
              imwrite(imgName,ROI);
              cout<<"  Saved "<<imgName<<endl;
         }
-        if(c=='6') cropRect.x++;
-        if(c=='4') cropRect.x--;
+        if(c=='l') cropRect.x++;
+        if(c=='r') cropRect.x--;
+        if(c=='d') cropRect.y++;
+        if(c=='u') cropRect.y--;
+
+        //if(c=='6') cropRect.x++;
+        //if(c=='4') cropRect.x--;
         if(c=='8') std::cout<< w.ROII  << std::endl; //cropRect.y--;
         if(c=='2') showGrids(250,22);
 
@@ -709,7 +731,7 @@ int main(int argc, char *argv[])
         if(c=='b') cropRect.height--;
         if(c=='f') { cropRect.x++; cropRect.width--;}
         */
-        if(c=='r') {cvtColor( fin_img, src, CV_BGR2GRAY );}         // resets
+        if(c=='a') {cvtColor( fin_img, src, CV_BGR2GRAY );}         // resets
         if(c=='t') {threshold( src_gray, src, w.ThreshVale, MaxThresh, w.Instance );}
 
         if(c=='m'){
