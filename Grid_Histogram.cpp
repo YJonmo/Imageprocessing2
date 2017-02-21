@@ -43,7 +43,7 @@ char imgName[15];
 //cv::Scalar     stddev;
 Mat meann(1,1,CV_64F),stddev(1,1,CV_64F);
 
-const int maxNumSamples = 10;
+const int maxNumSamples = 50;
 Mat Object1_array[maxNumSamples], Object1_array_Threshed[maxNumSamples];
 std::vector<Mat> Object1_mean(maxNumSamples), Object1_stddev(maxNumSamples),Object1_hist(maxNumSamples);
 std::vector<Mat> Object1_hist_Av(1);
@@ -67,11 +67,11 @@ std::vector<Mat> Hist_current(1);
 void showHistogram();
 void showImage();
 
-void showGrids(int Grid_Size, int Obj1_Blk_Pix)
+void showGrids(int Grid_Size, int Obj1_NoBlk_Pix)
 {
     int No_Rows = src.rows/Grid_Size;
     int No_Cols= src.cols/Grid_Size;
-    int  Grid_Blk_Pix = 0;
+    int  Grid_NoBlk_Pix = 0;
     float Grid_Objs = 0;
 
     src_temp = src_original.clone();
@@ -99,22 +99,22 @@ void showGrids(int Grid_Size, int Obj1_Blk_Pix)
         {
 
 
-            Grid_Blk_Pix = 0;
+            Grid_NoBlk_Pix = 0;
             for (int i = (p1.y - Grid_Size); (i < p1.y)&(i < src.rows); i++)
             {
                 for (int j = p1.x + Grid_Size*Col_Ind; (j < (p1.x + Grid_Size*(Col_Ind + 1)))&(j < src.cols); j++)
                 {
                     //if ( src.at<cv::Vec3b>(y,x) == cv::Vec3b(255,255,255) ) Count_Black++;
-                    if (src.at<uchar>(i,j) == 0) {//src.at<uchar>(i,j) = 25+30*Row_Ind;
-                        Grid_Blk_Pix++;}
+                    if (src.at<uchar>(i,j) != 0) {//src.at<uchar>(i,j) = 25+30*Row_Ind;
+                        Grid_NoBlk_Pix++;}
                 }
             }
 
-            //cout << "Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
-            //cout << "Grid_Blk_Pix:" << Grid_Blk_Pix << endl;
-            Grid_Objs = float(Grid_Blk_Pix)/float(Obj1_Blk_Pix);
+            //cout << "Obj1_NoBlk_Pix: " << Obj1_NoBlk_Pix << endl;
+            //cout << "Grid_NoBlk_Pix:" << Grid_NoBlk_Pix << endl;
+            Grid_Objs = float(Grid_NoBlk_Pix)/float(Obj1_NoBlk_Pix);
             TextOrig.x = TextOffset_X + Grid_Size*Col_Ind;
-            cv::putText(src_temp, std::to_string(Grid_Objs), TextOrig, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar (255,255,255), 3, 8 );
+            cv::putText(src_temp, std::to_string(Grid_Objs), TextOrig, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar (255,255,255), Window/10, Window/3 );
             /*
             cv::Point TextOrig2;
             TextOrig2.x = TextOrig.x;
@@ -149,10 +149,10 @@ void showGrids(int Grid_Size, int Obj1_Blk_Pix)
 void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, int Thresh_Type)
 {
 
-    int Obj1_Blk_Pix = 0;
-    int Obj2_Blk_Pix = 0;
-    int BkGr_Blk_Pix = 0;
-    int  src_Blk_Pix = 0;
+    int Obj1_NoBlk_Pix = 0;
+    int Obj2_NoBlk_Pix = 0;
+    int BkGr_NoBlk_Pix = 0;
+    int  src_NoBlk_Pix = 0;
     No_Object1 = 0;
     No_Object2 = 0;
     //cout << "Object1_Index: " << Object1_Index ;
@@ -164,13 +164,14 @@ void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, in
             for (int j = 0; j < Object1_array_Threshed[ii].cols; j++)
             {
                 //if ( src.at<cv::Vec3b>(y,x) == cv::Vec3b(255,255,255) ) Count_Black++;
-                if (Object1_array[ii].at<uchar>(i,j) == 0) Obj1_Blk_Pix++;
+                if ((Thresh_Type == 3)&&(Object1_array[ii].at<uchar>(i,j) != 0)) Obj1_NoBlk_Pix++;
+                else if ((Thresh_Type == 4)&&(Object1_array[ii].at<uchar>(i,j) != 0)) Obj1_NoBlk_Pix++;
             }
         }
     }
-    //cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
-    Obj1_Blk_Pix = Obj1_Blk_Pix/Object1_Index;         //Average number of the pixels belonging to the Object1
-    //cout << " Obj1_Blk_Pix: " << Obj1_Blk_Pix << endl;
+    //cout << " Obj1_NoBlk_Pix: " << Obj1_NoBlk_Pix << endl;
+    Obj1_NoBlk_Pix = Obj1_NoBlk_Pix/Object1_Index;        //Average number of the pixels belonging to the Object1
+    //cout << " Obj1_NoBlk_Pix: " << Obj1_NoBlk_Pix << endl;
 
     for(int ii = 0; ii < Object2_Index; ii++)
     {
@@ -188,15 +189,17 @@ void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, in
         for (int j = 0; j < src.cols; j++)
         {
             //if ( src.at<cv::Vec3b>(y,x) == cv::Vec3b(255,255,255) ) Count_Black++;
-            if (src.at<uchar>(i,j) == 0) src_Blk_Pix++;
+            if ((Thresh_Type == 3)&&(src.at<uchar>(i,j) != 0)) src_NoBlk_Pix++;
+            else if ((Thresh_Type == 4)&&(src.at<uchar>(i,j) != 0)) {src_NoBlk_Pix++;}
+            //if (src.at<uchar>(i,j) == 0) src_NoBlk_Pix++;
         }
     }
-    if (Obj1_Blk_Pix > 0)
+    if (Obj1_NoBlk_Pix > 0)
     {
-        No_Object1 = src_Blk_Pix/Obj1_Blk_Pix;
-        cout << "src_Blk_Pix: " << src_Blk_Pix << endl;   //Number of the pixels passed the threshold
+        No_Object1 = src_NoBlk_Pix/Obj1_NoBlk_Pix;
+        cout << "src_NoBlk_Pix: " << src_NoBlk_Pix << endl;   //Number of the pixels passed the threshold
         cout << "Number of Object 1: " << No_Object1 << endl; //Number of Object1
-        showGrids(250, Obj1_Blk_Pix);
+        showGrids(Window*5, Obj1_NoBlk_Pix);
     }
     else
     {
@@ -245,13 +248,13 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
         }
         cv::divide(Object1_hist_Av[0], ((Object1_hist_Av[0]*0) + Object1_Index), Object1_hist_Av[0], 1);
         cout << Object1_hist_Av[0] << endl;
-        namedWindow("AvObj1",WINDOW_NORMAL);
-        resizeWindow("AvObj1", Window*4, Window*4);
-        Object1_Avg.convertTo(Object1_Avg, CV_8UC1);
-        imshow("AvObj1",Object1_Avg);
-        ROI = Object1_Avg;
-        showHistogram();
-        cv::waitKey(200);
+        //namedWindow("AvObj1",WINDOW_NORMAL);
+        //resizeWindow("AvObj1", Window*4, Window*4);
+        //Object1_Avg.convertTo(Object1_Avg, CV_8UC1);
+        //imshow("AvObj1",Object1_Avg);
+        //ROI = Object1_Avg;
+        //showHistogram();
+        //cv::waitKey(200);
 
     }
 
@@ -304,13 +307,13 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
         }
         cv::divide(BackGround_hist_Av[0], ((BackGround_hist_Av[0]*0) + BackGround_Index), BackGround_hist_Av[0], 1);
         cout << BackGround_hist_Av[0] << endl;
-        namedWindow("AvObj1",WINDOW_NORMAL);
-        resizeWindow("AvObj1", Window*4, Window*4);
-        BackGround_Avg.convertTo(BackGround_Avg, CV_8UC1);
-        imshow("AvObj1",BackGround_Avg);
-        ROI = BackGround_Avg;
-        showHistogram();
-        cv::waitKey(4000);
+        //namedWindow("AvObj1",WINDOW_NORMAL);
+        //resizeWindow("AvObj1", Window*4, Window*4);
+        //BackGround_Avg.convertTo(BackGround_Avg, CV_8UC1);
+        //imshow("AvObj1",BackGround_Avg);
+        //ROI = BackGround_Avg;
+        //showHistogram();
+        //cv::waitKey(4000);
 
 
         for (unsigned ii=0; ii <BackGround_Index; ii++)
@@ -520,22 +523,17 @@ int main(int argc, char *argv[])
     cout<<"Click and drag for Selection"<<endl<<endl;
     cout<<"------> Press 's' to save"<<endl<<endl;
 
+    cout<<"------> Press '3' to select the sample"<<endl;
+    cout<<"------> Press '2' count the objects after sample selection"<<endl;
+    cout<<"------> Press '1' count the objects after sample selection (inverse thresholding)"<<endl;
+    cout<<"------> Press 'a' to reset the image to the original"<<endl;
+    cout<<"------> Press 't' for image thresholding"<<endl;
+
     cout<<"------> Press 'u' to move up"<<endl;
     cout<<"------> Press 'd' to move down"<<endl;
     cout<<"------> Press 'r' to move right"<<endl;
     cout<<"------> Press 'l' to move left"<<endl<<endl;
 
-    cout<<"------> Press 'w' increas top"<<endl;
-    cout<<"------> Press 'x' increas bottom"<<endl;
-    cout<<"------> Press 'd' increas right"<<endl;
-    cout<<"------> Press 'a' increas left"<<endl<<endl;
-
-    cout<<"------> Press 't' decrease top"<<endl;
-    cout<<"------> Press 'b' decrease bottom"<<endl;
-    cout<<"------> Press 'h' decrease right"<<endl;
-    cout<<"------> Press 'f' decrease left"<<endl<<endl;
-
-    cout<<"------> Press 'r' to reset"<<endl;
     cout<<"------> Press 'Esc' to quit"<<endl<<endl;
 
 
@@ -666,15 +664,15 @@ int main(int argc, char *argv[])
 
         //if(c=='6') cropRect.x++;
         //if(c=='4') cropRect.x--;
-        if(c=='8') std::cout<< w.ROII  << std::endl; //cropRect.y--;
-        if(c=='2') showGrids(250,22);
+        //if(c=='8') std::cout<< w.ROII  << std::endl; //cropRect.y--;
+        //if(c=='2') showGrids(250,22);
 
         /*{double minn, maxx; cv::minMaxLoc(Hist_current[0], &minn, &maxx);
             cout << "Min: " << minn  << " Max: " << maxx << endl;}*/
             //std::cout << "Mean: " << meann << std::endl << "   StdDev: " << stddev << std::endl;
             //cerr << meann << " " << stddev << endl;
           //std::cout<< Histogram[0]; //std::cout<< w.Instance  << std::endl; //cropRect.y++;
-        if(c=='3')
+        if(c=='0')
         {
             switch (w.Instance)
             {
@@ -707,10 +705,10 @@ int main(int argc, char *argv[])
             }
         }
 
-        if(c=='4')
-        {
-            MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
-        }
+        //if(c=='4')
+        //{
+        //    MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
+        //}
 
         if(c=='c')
         {
@@ -734,11 +732,36 @@ int main(int argc, char *argv[])
         if(c=='a') {cvtColor( fin_img, src, CV_BGR2GRAY );}         // resets
         if(c=='t') {threshold( src_gray, src, w.ThreshVale, MaxThresh, w.Instance );}
 
-        if(c=='m'){
-        int threshh = (Min_BkGn_mean - Max_BkGn_STD*2) ;
-        cout << "threshh: " << threshh << endl;}
-        if(c=='9') {threshold( src_gray, src, (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, w.Instance );}
-        if(c=='0') {threshold( src_gray, src, (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, 4 );}
+        if(c=='m')
+        {
+            int threshh = (Min_BkGn_mean - Max_BkGn_STD*2) ;
+            cout << "threshh: " << threshh << endl;
+        }
+        if(c=='1')
+        {
+            MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
+            threshold( src_gray, src, (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, w.Instance );
+            countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 3);
+        }
+        if(c=='2')
+        {
+            MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
+            threshold( src_gray, src, (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, 4 );
+            countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 4);
+        }
+        if(c=='3')
+        {
+            MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
+            //threshold( src_gray, src, (Min_BkGn_mean - Max_BkGn_STD*2), (Max_BkGn_mean + Max_BkGn_STD*2), 4 );
+            threshold( src_gray, src, (Max_BkGn_mean + Max_BkGn_STD*2), MaxThresh, 3 );
+            countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 3);
+        }
+        if(c=='4')
+        {
+            MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
+            threshold( src_gray, src, (Max_BkGn_mean + Max_BkGn_STD*2), MaxThresh, 4 );
+            countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 4);
+        }
 
         if(c==27) break;
         //if(c=='r') {cropRect.x=0;cropRect.y=0;cropRect.width=0;cropRect.height=0;}
