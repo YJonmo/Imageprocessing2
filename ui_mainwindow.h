@@ -33,20 +33,17 @@ public:
     QWidget *centralWidget;
     QPushButton *ResetButton;
     QPushButton *UpdateButton;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
     QLineEdit *Object1_Index_Show;
     QLineEdit *Object2_Index_Show;
     QLineEdit *BackGround_Index_Show;
-    QWidget *widget1;
+    QWidget *layoutWidget1;
     QVBoxLayout *verticalLayout_2;
     QRadioButton *radioButton;
     QRadioButton *radioButton_2;
     QRadioButton *radioButton_3;
-    QWidget *widget2;
-    QHBoxLayout *horizontalLayout;
-    QLineEdit *Replica;
-    QWidget *widget3;
+    QWidget *layoutWidget2;
     QHBoxLayout *horizontalLayout_2;
     QPushButton *ROI;
     QLineEdit *InputROI;
@@ -67,81 +64,68 @@ public:
         UpdateButton = new QPushButton(centralWidget);
         UpdateButton->setObjectName(QStringLiteral("UpdateButton"));
         UpdateButton->setGeometry(QRect(120, 280, 80, 21));
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(110, 190, 127, 78));
-        verticalLayout = new QVBoxLayout(widget);
+        layoutWidget = new QWidget(centralWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(110, 190, 127, 78));
+        verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         verticalLayout->setContentsMargins(0, 0, 0, 0);
-        Object1_Index_Show = new QLineEdit(widget);
+        Object1_Index_Show = new QLineEdit(layoutWidget);
         Object1_Index_Show->setObjectName(QStringLiteral("Object1_Index_Show"));
 
         verticalLayout->addWidget(Object1_Index_Show);
 
-        Object2_Index_Show = new QLineEdit(widget);
+        Object2_Index_Show = new QLineEdit(layoutWidget);
         Object2_Index_Show->setObjectName(QStringLiteral("Object2_Index_Show"));
 
         verticalLayout->addWidget(Object2_Index_Show);
 
-        BackGround_Index_Show = new QLineEdit(widget);
+        BackGround_Index_Show = new QLineEdit(layoutWidget);
         BackGround_Index_Show->setObjectName(QStringLiteral("BackGround_Index_Show"));
 
         verticalLayout->addWidget(BackGround_Index_Show);
 
-        widget1 = new QWidget(centralWidget);
-        widget1->setObjectName(QStringLiteral("widget1"));
-        widget1->setGeometry(QRect(7, 189, 101, 81));
-        verticalLayout_2 = new QVBoxLayout(widget1);
+        layoutWidget1 = new QWidget(centralWidget);
+        layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
+        layoutWidget1->setGeometry(QRect(7, 189, 101, 81));
+        verticalLayout_2 = new QVBoxLayout(layoutWidget1);
         verticalLayout_2->setSpacing(6);
         verticalLayout_2->setContentsMargins(11, 11, 11, 11);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         verticalLayout_2->setContentsMargins(0, 0, 0, 0);
-        radioButton = new QRadioButton(widget1);
+        radioButton = new QRadioButton(layoutWidget1);
         radioButton->setObjectName(QStringLiteral("radioButton"));
 
         verticalLayout_2->addWidget(radioButton);
 
-        radioButton_2 = new QRadioButton(widget1);
+        radioButton_2 = new QRadioButton(layoutWidget1);
         radioButton_2->setObjectName(QStringLiteral("radioButton_2"));
 
         verticalLayout_2->addWidget(radioButton_2);
 
-        radioButton_3 = new QRadioButton(widget1);
+        radioButton_3 = new QRadioButton(layoutWidget1);
         radioButton_3->setObjectName(QStringLiteral("radioButton_3"));
         radioButton_3->setEnabled(true);
         radioButton_3->setChecked(true);
 
         verticalLayout_2->addWidget(radioButton_3);
 
-        widget2 = new QWidget(centralWidget);
-        widget2->setObjectName(QStringLiteral("widget2"));
-        widget2->setGeometry(QRect(7, 22, 212, 24));
-        horizontalLayout = new QHBoxLayout(widget2);
-        horizontalLayout->setSpacing(6);
-        horizontalLayout->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        Replica = new QLineEdit(widget2);
-        Replica->setObjectName(QStringLiteral("Replica"));
-
-        horizontalLayout->addWidget(Replica);
-
-        widget3 = new QWidget(centralWidget);
-        widget3->setObjectName(QStringLiteral("widget3"));
-        widget3->setGeometry(QRect(10, 70, 212, 24));
-        horizontalLayout_2 = new QHBoxLayout(widget3);
+        layoutWidget2 = new QWidget(centralWidget);
+        layoutWidget2->setObjectName(QStringLiteral("layoutWidget2"));
+        layoutWidget2->setGeometry(QRect(10, 70, 212, 24));
+        horizontalLayout_2 = new QHBoxLayout(layoutWidget2);
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-        ROI = new QPushButton(widget3);
+        ROI = new QPushButton(layoutWidget2);
         ROI->setObjectName(QStringLiteral("ROI"));
 
         horizontalLayout_2->addWidget(ROI);
 
-        InputROI = new QLineEdit(widget3);
+        InputROI = new QLineEdit(layoutWidget2);
         InputROI->setObjectName(QStringLiteral("InputROI"));
 
         horizontalLayout_2->addWidget(InputROI);
@@ -157,7 +141,6 @@ public:
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
-        QWidget::setTabOrder(Replica, radioButton_2);
         QWidget::setTabOrder(radioButton_2, radioButton_3);
 
         retranslateUi(MainWindow);
