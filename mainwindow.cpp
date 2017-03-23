@@ -14,6 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
     Object1_Index = 0;
     Object2_Index = 0;
     BackGround_Index = 0;
+    Magnification = 5;
+
+    Illumination = 0;
+    Blurr_size = 500;
     ui->setupUi(this);
 }
 MainWindow::~MainWindow()
@@ -63,4 +67,32 @@ void MainWindow::on_UpdateButton_clicked()
     ui->Object1_Index_Show->setText(QString::number(Object1_Index));
     ui->Object2_Index_Show->setText(QString::number(Object2_Index));
     ui->BackGround_Index_Show->setText(QString::number(BackGround_Index));
+    std::cout << "Changed" << endl;
+}
+
+void MainWindow::on_Ill_Correct_clicked()
+{
+    Illumination = 1;
+}
+
+void MainWindow::on_Ill_No_Correct_clicked()
+{
+    Illumination = 0;
+}
+
+void MainWindow::on_BLurrInputButton_clicked()
+{
+    QString BlurrSize = ui->InputBlurrSize->text();
+
+    std::cout << BlurrSize.toStdString() << std::endl;
+    Blurr_size = BlurrSize.split(" ")[0].toInt();
+    //std::cout << "Changed" << endl;
+}
+
+void MainWindow::on_Magnific_clicked()
+{
+    QString MagnSize = ui->MagInput->text();
+
+    std::cout << MagnSize.toStdString() << std::endl;
+    Magnification = MagnSize.split(" ")[0].toInt();
 }

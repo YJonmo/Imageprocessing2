@@ -33,7 +33,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = Test31.0.0
-DISTDIR = /home/yjon701/Documents/C_C++/Image_Processing/CountingAndWidgets6/.tmp/Test31.0.0
+DISTDIR = /home/yjon701/Documents/C_C++/Image_Processing/CountingAndWidgets7/.tmp/Test31.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/yjon701/Documents/Qt/5.7/gcc_64/lib
 LIBS          = $(SUBLIBS) `pkg-config opencv --libs` -L/home/yjon701/Documents/Qt/5.7/gcc_64/lib -lQt5Widgets -L/usr/lib64 -lQt5Gui -lQt5Core -lGL -lpthread 
@@ -184,7 +184,6 @@ DIST          = ../../../Qt/5.7/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../Qt/5.7/gcc_64/mkspecs/features/qt_config.prf \
 		../../../Qt/5.7/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../../Qt/5.7/gcc_64/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		../../../Qt/5.7/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../../Qt/5.7/gcc_64/mkspecs/features/default_pre.prf \
 		../../../Qt/5.7/gcc_64/mkspecs/features/resolve_config.prf \
@@ -346,7 +345,6 @@ Makefile: CountingAndWidgets6.pro ../../../Qt/5.7/gcc_64/mkspecs/linux-g++/qmake
 		../../../Qt/5.7/gcc_64/mkspecs/features/qt_config.prf \
 		../../../Qt/5.7/gcc_64/mkspecs/linux-g++/qmake.conf \
 		../../../Qt/5.7/gcc_64/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		../../../Qt/5.7/gcc_64/mkspecs/features/exclusive_builds.prf \
 		../../../Qt/5.7/gcc_64/mkspecs/features/default_pre.prf \
 		../../../Qt/5.7/gcc_64/mkspecs/features/resolve_config.prf \
@@ -500,7 +498,6 @@ Makefile: CountingAndWidgets6.pro ../../../Qt/5.7/gcc_64/mkspecs/linux-g++/qmake
 ../../../Qt/5.7/gcc_64/mkspecs/features/qt_config.prf:
 ../../../Qt/5.7/gcc_64/mkspecs/linux-g++/qmake.conf:
 ../../../Qt/5.7/gcc_64/mkspecs/features/spec_post.prf:
-.qmake.stash:
 ../../../Qt/5.7/gcc_64/mkspecs/features/exclusive_builds.prf:
 ../../../Qt/5.7/gcc_64/mkspecs/features/default_pre.prf:
 ../../../Qt/5.7/gcc_64/mkspecs/features/resolve_config.prf:
@@ -669,7 +666,7 @@ moc_mainwindow.cpp: ../../../Qt/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../../Qt/5.7/gcc_64/include/QtGui/qicon.h \
 		mainwindow.h \
 		../../../Qt/5.7/gcc_64/bin/moc
-	/home/yjon701/Documents/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/yjon701/Documents/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/yjon701/Documents/C_C++/Image_Processing/CountingAndWidgets6 -I/usr/local/include/opencv -I/home/yjon701/Documents/Qt/5.7/gcc_64/include -I/home/yjon701/Documents/Qt/5.7/gcc_64/include/QtWidgets -I/home/yjon701/Documents/Qt/5.7/gcc_64/include/QtGui -I/home/yjon701/Documents/Qt/5.7/gcc_64/include/QtCore -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
+	/home/yjon701/Documents/Qt/5.7/gcc_64/bin/moc $(DEFINES) -I/home/yjon701/Documents/Qt/5.7/gcc_64/mkspecs/linux-g++ -I/home/yjon701/Documents/C_C++/Image_Processing/CountingAndWidgets7 -I/usr/local/include/opencv -I/home/yjon701/Documents/Qt/5.7/gcc_64/include -I/home/yjon701/Documents/Qt/5.7/gcc_64/include/QtWidgets -I/home/yjon701/Documents/Qt/5.7/gcc_64/include/QtGui -I/home/yjon701/Documents/Qt/5.7/gcc_64/include/QtCore -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:

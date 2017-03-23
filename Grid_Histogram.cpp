@@ -21,10 +21,13 @@ int main(int argc, char *argv[])
 }
 */
 Mat src, src2, img,ROI, src_temp, src_original, src_gray, src_threshed;
+Mat fin_img;
+
 Rect cropRect(0,0,0,0);
 Point P1(0,0);
 Point P2(0,0);
 int Window = 100 ;
+int ROI_Mag = 5;
 int const MaxThresh = 255;
 const char* winName="Crop Image";
 bool clicked=false;
@@ -104,7 +107,7 @@ void showGrids(int Grid_Size, int Obj1_NoBlk_Pix)
             */
             showImage();
             imshow("Counted",src_temp);
-            cv::waitKey(11);
+            cv::waitKey(1);
         }
     }
     //cv::putText(src, " text", TextOrig, cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar (255,255,255), 3, 8 );
@@ -345,6 +348,9 @@ void checkBoundary()
    if(cropRect.y<0)
      cropRect.height=0;
 }
+
+
+
 void showImage()
 {
     img=src.clone();
@@ -355,7 +361,7 @@ void showImage()
         ROI= src(cropRect);
         meanStdDev(ROI, meann, stddev);
         namedWindow("Cropped",WINDOW_NORMAL);
-        resizeWindow("Cropped", Window*4, Window*4);
+        resizeWindow("Cropped", Window*ROI_Mag, Window*ROI_Mag);
         imshow("Cropped",ROI);
         showHistogram();
     }
@@ -409,44 +415,19 @@ void onMouse( int event, int x, int y, int f, void* )
     }
     showImage();
 }
-//int main()
-int main(int argc, char *argv[])
+
+
+
+void SetUps(int Illu_Correct, int Blurring_size)
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    std::cout<< "Hello" << std::endl;
-    std::cout<< w.ROII  << std::endl;
-    w.show();
-    cout<<"Click and drag for Selection"<<endl<<endl;
-    cout<<"------> Press 's' to save"<<endl<<endl;
-    cout<<"------> Press '3' to select the sample"<<endl;
-    cout<<"------> Press '2' count the objects after sample selection"<<endl;
-    cout<<"------> Press '1' count the objects after sample selection (inverse thresholding)"<<endl;
-    cout<<"------> Press 'a' to reset the image to the original"<<endl;
-    cout<<"------> Press 't' for image thresholding"<<endl;
-    cout<<"------> Press 'u' to move up"<<endl;
-    cout<<"------> Press 'd' to move down"<<endl;
-    cout<<"------> Press 'r' to move right"<<endl;
-    cout<<"------> Press 'l' to move left"<<endl<<endl;
-    cout<<"------> Press 'Esc' to quit"<<endl<<endl;
-    namedWindow(winName,WINDOW_NORMAL);
-    QString filename = QFileDialog::getOpenFileName();
-    std::string filename2 = filename.toStdString();
-    //src=imread("/home/yjon701/Documents/ImageProcessing/2MicroBeed_Fresh_Transmission_Green.jpg",1);
-    src = imread(filename2);
-    src_original = src;
-    setWindowProperty(winName, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
-    imshow(winName,src);
-    resizeWindow(winName, 658, 520);
-    imshow(winName,src);
-    waitKey(1);
-    setMouseCallback(winName,onMouse,NULL );
+
     Mat img_background2;
     Mat img_background;
     Mat img_clean2;
     Mat img_clean;    int Object1_Index = 0;
     int Object2_Index = 0;
     int BackGround_Index = 0;
+    src = src_original;
     //img_clean.create(2,2,CV_8UC3);
     //img.create(2,2,CV_8UC1);
     img.convertTo(img_background2, CV_32FC3); // or CV_32F works (too)
@@ -468,20 +449,38 @@ int main(int argc, char *argv[])
         //img_clean2 = src - img_background;
     }
     */
-    int ii = 500 ;
-    blur( src2, img_background2, Size( ii, ii ));
-    blur( img_background2, img_background2, Size( ii, ii ));
-    img_clean2 = src2 - img_background2;
-    //img_clean2.convertTo(img_clean, CV_8UC3);   // img_clean2 is a 8 bit UChar image
-    img_background2.convertTo(img_background, CV_8UC3);
+    if (Illu_Correct == 1)
+    {
+        int ii = Blurring_size ;
+        blur( src2, img_background2, Size( ii, ii ));
+        blur( img_background2, img_background2, Size( ii, ii ));
+        img_clean2 = src2 - img_background2;
+        img_background2.convertTo(img_background, CV_8UC3);
+
+        namedWindow("Back_Subbed",WINDOW_NORMAL);
+        resizeWindow("Back_Subbed", 558, 420);
+        imshow( "Back_Subbed", img_background );
+        waitKey(1000);
+        //namedWindow("RawImage",WINDOW_NORMAL);
+        //resizeWindow("RawImage", 558, 420);
+        //imshow( "RawImage", src );
+        //waitKey(1000);
+
+
+    }
+    else
+    {
+        img_clean2 = src2 ;
+        //img_clean2.convertTo(img_clean, CV_8UC3);   // img_clean2 is a 8 bit UChar image
+    }
     /// Split the image into different channels
     vector<Mat> rgbChannels(3);
-    ii = 2;
+    int ii = 2;
     blur( img_clean2, img_clean2, Size( ii, ii ));
     split(img_clean2, rgbChannels);
     double min, max;
     // Show individual channels
-    Mat g, fin_img;
+    Mat g;
     fin_img.create(2,2,CV_32FC3);
     g = Mat::zeros(Size(src.cols, src.rows), CV_32FC1);
     // Showing Red Channel
@@ -507,17 +506,50 @@ int main(int argc, char *argv[])
     //cv::Mat SS(10, ssize, CV_32FC1, cv::Scalar(10));
     //std::cout << SS.channels() << endl ;
     //std::cout << SS.at<cv::Vec3f>(21,21)[3] << endl;(2000);
-    namedWindow("Back_Subbed",WINDOW_NORMAL);
-    resizeWindow("Back_Subbed", 558, 420);
-    imshow( "Back_Subbed", img_background );
-    waitKey(2000);
-    namedWindow("RawImage",WINDOW_NORMAL);
-    resizeWindow("RawImage", 558, 420);
-    imshow( "RawImage", src );
-    waitKey(2000);
+
     src = fin_img;
     cvtColor( src, src_gray, CV_BGR2GRAY );
     src = src_gray;
+
+}
+
+
+//int main()
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    MainWindow w;
+    std::cout<< "Hello" << std::endl;
+    std::cout<< w.ROII  << std::endl;
+    int Illumination_Mode = w.Illumination;         // 0 means no illumination correction
+    int Current_Blurr_size = w.Blurr_size;
+    w.show();
+    cout<<"Click and drag for Selection"<<endl<<endl;
+    cout<<"------> Press 's' to save"<<endl<<endl;
+    cout<<"------> Press '3' to select the sample"<<endl;
+    cout<<"------> Press '2' count the objects after sample selection"<<endl;
+    cout<<"------> Press '1' count the objects after sample selection (inverse thresholding)"<<endl;
+    cout<<"------> Press 'a' to reset the image to the original"<<endl;
+    cout<<"------> Press 't' for image thresholding"<<endl;
+    cout<<"------> Press 'u' to move up"<<endl;
+    cout<<"------> Press 'd' to move down"<<endl;
+    cout<<"------> Press 'r' to move right"<<endl;
+    cout<<"------> Press 'l' to move left"<<endl<<endl;
+    cout<<"------> Press 'Esc' to quit"<<endl<<endl;
+    namedWindow(winName,WINDOW_NORMAL);
+    QString filename = QFileDialog::getOpenFileName();
+    std::string filename2 = filename.toStdString();
+    //src=imread("/home/yjon701/Documents/ImageProcessing/2MicroBeed_Fresh_Transmission_Green.jpg",1);
+    src = imread(filename2);
+    src_original = src;
+    setWindowProperty(winName, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+    imshow(winName,src);
+    resizeWindow(winName, 658, 520);
+    imshow(winName,src);
+    waitKey(1);
+    SetUps(w.Illumination,  w.Blurr_size);
+    setMouseCallback(winName,onMouse,NULL );
+
     while(1)
     {
         char c=waitKey(1);
@@ -525,7 +557,18 @@ int main(int argc, char *argv[])
         while (c == '~')
         {
             Window = w.ROII;
-            c=waitKey(1000);
+            if ((w.Illumination != Illumination_Mode) || ((w.Blurr_size != Current_Blurr_size)&&(w.Illumination == 1)))
+            {
+                Current_Blurr_size = w.Blurr_size;
+                Illumination_Mode = w.Illumination;
+                SetUps(w.Illumination,  w.Blurr_size);
+                cout << 'Illumination is now in mode ' << Illumination_Mode << endl;
+            }
+            if (ROI_Mag != w.Magnification)
+            {
+                ROI_Mag = w.Magnification;
+            }
+            c=waitKey(500);
         }
         //Window = w.ROII;
 
