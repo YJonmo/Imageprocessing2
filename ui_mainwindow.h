@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLineEdit>
@@ -47,18 +48,23 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QPushButton *ROI;
     QLineEdit *InputROI;
-    QWidget *layoutWidget3;
-    QVBoxLayout *verticalLayout_4;
-    QRadioButton *Ill_No_Correct;
-    QRadioButton *Ill_Correct;
-    QWidget *layoutWidget4;
-    QHBoxLayout *horizontalLayout;
-    QPushButton *BLurrInputButton;
-    QLineEdit *InputBlurrSize;
+    QPushButton *LoadImage;
     QWidget *widget;
     QHBoxLayout *horizontalLayout_3;
     QPushButton *Magnific;
     QLineEdit *MagInput;
+    QWidget *widget1;
+    QGridLayout *gridLayout;
+    QPushButton *ClaheButton;
+    QLineEdit *ClaheInput;
+    QWidget *widget2;
+    QGridLayout *gridLayout_2;
+    QVBoxLayout *verticalLayout_4;
+    QRadioButton *Ill_No_Correct;
+    QRadioButton *Ill_Correct;
+    QHBoxLayout *horizontalLayout;
+    QPushButton *BLurrInputButton;
+    QLineEdit *InputBlurrSize;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -68,19 +74,19 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(297, 369);
+        MainWindow->resize(295, 502);
         MainWindow->setDocumentMode(false);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         ResetButton = new QPushButton(centralWidget);
         ResetButton->setObjectName(QStringLiteral("ResetButton"));
-        ResetButton->setGeometry(QRect(20, 280, 80, 21));
+        ResetButton->setGeometry(QRect(34, 350, 80, 21));
         UpdateButton = new QPushButton(centralWidget);
         UpdateButton->setObjectName(QStringLiteral("UpdateButton"));
-        UpdateButton->setGeometry(QRect(120, 280, 80, 21));
+        UpdateButton->setGeometry(QRect(144, 350, 80, 21));
         layoutWidget = new QWidget(centralWidget);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(110, 190, 127, 78));
+        layoutWidget->setGeometry(QRect(114, 260, 127, 81));
         verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
@@ -103,7 +109,7 @@ public:
 
         layoutWidget1 = new QWidget(centralWidget);
         layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
-        layoutWidget1->setGeometry(QRect(7, 189, 101, 81));
+        layoutWidget1->setGeometry(QRect(11, 260, 101, 81));
         verticalLayout_2 = new QVBoxLayout(layoutWidget1);
         verticalLayout_2->setSpacing(6);
         verticalLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -129,7 +135,7 @@ public:
 
         layoutWidget2 = new QWidget(centralWidget);
         layoutWidget2->setObjectName(QStringLiteral("layoutWidget2"));
-        layoutWidget2->setGeometry(QRect(10, 150, 191, 24));
+        layoutWidget2->setGeometry(QRect(10, 195, 281, 24));
         horizontalLayout_2 = new QHBoxLayout(layoutWidget2);
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -145,55 +151,12 @@ public:
 
         horizontalLayout_2->addWidget(InputROI);
 
-        layoutWidget3 = new QWidget(centralWidget);
-        layoutWidget3->setObjectName(QStringLiteral("layoutWidget3"));
-        layoutWidget3->setGeometry(QRect(10, 10, 168, 47));
-        verticalLayout_4 = new QVBoxLayout(layoutWidget3);
-        verticalLayout_4->setSpacing(6);
-        verticalLayout_4->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
-        verticalLayout_4->setContentsMargins(0, 0, 0, 0);
-        Ill_No_Correct = new QRadioButton(layoutWidget3);
-        buttonGroup = new QButtonGroup(MainWindow);
-        buttonGroup->setObjectName(QStringLiteral("buttonGroup"));
-        buttonGroup->addButton(Ill_No_Correct);
-        Ill_No_Correct->setObjectName(QStringLiteral("Ill_No_Correct"));
-        Ill_No_Correct->setEnabled(true);
-        Ill_No_Correct->setChecked(true);
-
-        verticalLayout_4->addWidget(Ill_No_Correct);
-
-        Ill_Correct = new QRadioButton(layoutWidget3);
-        buttonGroup->addButton(Ill_Correct);
-        Ill_Correct->setObjectName(QStringLiteral("Ill_Correct"));
-
-        verticalLayout_4->addWidget(Ill_Correct);
-
-        layoutWidget4 = new QWidget(centralWidget);
-        layoutWidget4->setObjectName(QStringLiteral("layoutWidget4"));
-        layoutWidget4->setGeometry(QRect(10, 60, 281, 24));
-        horizontalLayout = new QHBoxLayout(layoutWidget4);
-        horizontalLayout->setSpacing(6);
-        horizontalLayout->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        BLurrInputButton = new QPushButton(layoutWidget4);
-        BLurrInputButton->setObjectName(QStringLiteral("BLurrInputButton"));
-        BLurrInputButton->setCheckable(false);
-        BLurrInputButton->setChecked(false);
-        BLurrInputButton->setFlat(false);
-
-        horizontalLayout->addWidget(BLurrInputButton);
-
-        InputBlurrSize = new QLineEdit(layoutWidget4);
-        InputBlurrSize->setObjectName(QStringLiteral("InputBlurrSize"));
-        InputBlurrSize->setReadOnly(false);
-
-        horizontalLayout->addWidget(InputBlurrSize);
-
+        LoadImage = new QPushButton(centralWidget);
+        LoadImage->setObjectName(QStringLiteral("LoadImage"));
+        LoadImage->setGeometry(QRect(60, 388, 131, 61));
         widget = new QWidget(centralWidget);
         widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(10, 110, 111, 24));
+        widget->setGeometry(QRect(10, 165, 281, 24));
         horizontalLayout_3 = new QHBoxLayout(widget);
         horizontalLayout_3->setSpacing(6);
         horizontalLayout_3->setContentsMargins(11, 11, 11, 11);
@@ -209,6 +172,74 @@ public:
 
         horizontalLayout_3->addWidget(MagInput);
 
+        widget1 = new QWidget(centralWidget);
+        widget1->setObjectName(QStringLiteral("widget1"));
+        widget1->setGeometry(QRect(10, 132, 281, 31));
+        gridLayout = new QGridLayout(widget1);
+        gridLayout->setSpacing(6);
+        gridLayout->setContentsMargins(11, 11, 11, 11);
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        gridLayout->setContentsMargins(0, 0, 0, 0);
+        ClaheButton = new QPushButton(widget1);
+        ClaheButton->setObjectName(QStringLiteral("ClaheButton"));
+
+        gridLayout->addWidget(ClaheButton, 0, 0, 1, 1);
+
+        ClaheInput = new QLineEdit(widget1);
+        ClaheInput->setObjectName(QStringLiteral("ClaheInput"));
+
+        gridLayout->addWidget(ClaheInput, 0, 1, 1, 1);
+
+        widget2 = new QWidget(centralWidget);
+        widget2->setObjectName(QStringLiteral("widget2"));
+        widget2->setGeometry(QRect(10, 10, 281, 78));
+        gridLayout_2 = new QGridLayout(widget2);
+        gridLayout_2->setSpacing(6);
+        gridLayout_2->setContentsMargins(11, 11, 11, 11);
+        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
+        gridLayout_2->setContentsMargins(0, 0, 0, 0);
+        verticalLayout_4 = new QVBoxLayout();
+        verticalLayout_4->setSpacing(6);
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        Ill_No_Correct = new QRadioButton(widget2);
+        buttonGroup = new QButtonGroup(MainWindow);
+        buttonGroup->setObjectName(QStringLiteral("buttonGroup"));
+        buttonGroup->addButton(Ill_No_Correct);
+        Ill_No_Correct->setObjectName(QStringLiteral("Ill_No_Correct"));
+        Ill_No_Correct->setEnabled(true);
+        Ill_No_Correct->setChecked(true);
+
+        verticalLayout_4->addWidget(Ill_No_Correct);
+
+        Ill_Correct = new QRadioButton(widget2);
+        buttonGroup->addButton(Ill_Correct);
+        Ill_Correct->setObjectName(QStringLiteral("Ill_Correct"));
+
+        verticalLayout_4->addWidget(Ill_Correct);
+
+
+        gridLayout_2->addLayout(verticalLayout_4, 0, 0, 1, 1);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        BLurrInputButton = new QPushButton(widget2);
+        BLurrInputButton->setObjectName(QStringLiteral("BLurrInputButton"));
+        BLurrInputButton->setCheckable(false);
+        BLurrInputButton->setChecked(false);
+        BLurrInputButton->setFlat(false);
+
+        horizontalLayout->addWidget(BLurrInputButton);
+
+        InputBlurrSize = new QLineEdit(widget2);
+        InputBlurrSize->setObjectName(QStringLiteral("InputBlurrSize"));
+        InputBlurrSize->setReadOnly(false);
+
+        horizontalLayout->addWidget(InputBlurrSize);
+
+
+        gridLayout_2->addLayout(horizontalLayout, 1, 0, 1, 1);
+
         MainWindow->setCentralWidget(centralWidget);
         layoutWidget->raise();
         layoutWidget->raise();
@@ -219,9 +250,12 @@ public:
         layoutWidget->raise();
         Magnific->raise();
         MagInput->raise();
+        LoadImage->raise();
+        ClaheButton->raise();
+        ClaheInput->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 297, 19));
+        menuBar->setGeometry(QRect(0, 0, 295, 19));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -244,14 +278,17 @@ public:
         radioButton->setText(QApplication::translate("MainWindow", "Object Type 1", 0));
         radioButton_2->setText(QApplication::translate("MainWindow", "Oject Type 2", 0));
         radioButton_3->setText(QApplication::translate("MainWindow", "Background", 0));
-        ROI->setText(QApplication::translate("MainWindow", "ROI size (pixel)", 0));
+        ROI->setText(QApplication::translate("MainWindow", "                         ROI size (pixel)                    ", 0));
         InputROI->setText(QApplication::translate("MainWindow", "60", 0));
+        LoadImage->setText(QApplication::translate("MainWindow", "Load Image", 0));
+        Magnific->setText(QApplication::translate("MainWindow", "                     Magnification for ROI               ", 0));
+        MagInput->setText(QApplication::translate("MainWindow", "5", 0));
+        ClaheButton->setText(QApplication::translate("MainWindow", "Clahe correction (zero means no correction)", 0));
+        ClaheInput->setText(QApplication::translate("MainWindow", "2", 0));
         Ill_No_Correct->setText(QApplication::translate("MainWindow", "No Illumination Correction", 0));
         Ill_Correct->setText(QApplication::translate("MainWindow", "Illumination Correction", 0));
         BLurrInputButton->setText(QApplication::translate("MainWindow", "Blurr size (pixel) for illumination correction", 0));
         InputBlurrSize->setText(QApplication::translate("MainWindow", "500", 0));
-        Magnific->setText(QApplication::translate("MainWindow", "Magnification", 0));
-        MagInput->setText(QApplication::translate("MainWindow", "5", 0));
     } // retranslateUi
 
 };

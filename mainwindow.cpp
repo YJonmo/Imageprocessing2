@@ -15,7 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
     Object2_Index = 0;
     BackGround_Index = 0;
     Magnification = 5;
+    LoadImageButton = 0;
+    Clahe_ClipLimit = 0;
+    Clahe_CliButton = 0 ;
 
+    Illumination_Button = 0;
     Illumination = 0;
     Blurr_size = 500;
     ui->setupUi(this);
@@ -82,11 +86,13 @@ void MainWindow::on_Ill_No_Correct_clicked()
 
 void MainWindow::on_BLurrInputButton_clicked()
 {
+
     QString BlurrSize = ui->InputBlurrSize->text();
 
     std::cout << BlurrSize.toStdString() << std::endl;
     Blurr_size = BlurrSize.split(" ")[0].toInt();
     //std::cout << "Changed" << endl;
+    Illumination_Button = 1;
 }
 
 void MainWindow::on_Magnific_clicked()
@@ -96,3 +102,25 @@ void MainWindow::on_Magnific_clicked()
     std::cout << MagnSize.toStdString() << std::endl;
     Magnification = MagnSize.split(" ")[0].toInt();
 }
+
+void MainWindow::on_LoadImage_clicked()
+{
+    LoadImageButton = 1;
+}
+
+void MainWindow::on_ClaheButton_clicked()
+{
+    QString ClaheLimit = ui->ClaheInput->text();
+    std::cout << ClaheLimit.toStdString() << std::endl;
+    Clahe_ClipLimit = ClaheLimit.split(" ")[0].toInt();
+    Clahe_CliButton = 1;
+}
+
+
+
+
+
+
+
+
+

@@ -18,7 +18,11 @@ public:
     int ThreshVale;
     int Blurr_size;
     int Illumination; //0 = no illumination correction
+    int Illumination_Button ;
     int Magnification;
+    int LoadImageButton;
+    int Clahe_ClipLimit;
+    int Clahe_CliButton;
 
     int Object1_Index;
     int Object2_Index;
@@ -44,6 +48,8 @@ private slots:
     void on_Ill_No_Correct_clicked();
     void on_BLurrInputButton_clicked();
     void on_Magnific_clicked();
+    void on_LoadImage_clicked();
+    void on_ClaheButton_clicked();
 };
 
 #endif // MAINWINDOW_H

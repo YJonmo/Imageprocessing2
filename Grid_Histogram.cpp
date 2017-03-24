@@ -167,7 +167,7 @@ void countObjects(int Object1_Index, int Object2_Index, int BackGround_Index, in
     if (Obj1_NoBlk_Pix > 0)
     {
         No_Object1 = src_NoBlk_Pix/Obj1_NoBlk_Pix;
-        cout << "src_NoBlk_Pix: " << src_NoBlk_Pix << endl;   //Number of the pixels passed the threshold
+        //cout << "src_NoBlk_Pix: " << src_NoBlk_Pix << endl;   //Number of the pixels passed the threshold
         cout << "Number of Object 1: " << No_Object1 << endl; //Number of Object1
         showGrids(Window*5, Obj1_NoBlk_Pix);
     }
@@ -193,20 +193,20 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
     {
         for (int i = 0; i < Object1_Index; i++)
         {
-            std::cout << Stack.channels() << endl;
-            std::cout << Object1_Avg.channels() << endl;
+            //std::cout << Stack.channels() << endl;
+            //std::cout << Object1_Avg.channels() << endl;
             meanStdDev(Object1_array[i], Object1_mean[i], Object1_stddev[i]);
             Object1_array[i].convertTo(Stack, CV_32F);
-            cout << Stack.size() << endl ;
-            cout << Object1_array[i].size() << endl ;
-            cout << Object1_Avg.size() << endl;
-            cout << Object1_hist_Av[0] << endl;
-            cout << Object1_hist[i] << endl;
+            //cout << Stack.size() << endl ;
+            //cout << Object1_array[i].size() << endl ;
+            //cout << Object1_Avg.size() << endl;
+            //cout << Object1_hist_Av[0] << endl;
+            //cout << Object1_hist[i] << endl;
             cv::add(Object1_hist[i], Object1_hist_Av[0], Object1_hist_Av[0]) ;
-            cout << Object1_hist_Av[0] << endl;
+            //cout << Object1_hist_Av[0] << endl;
         }
         cv::divide(Object1_hist_Av[0], ((Object1_hist_Av[0]*0) + Object1_Index), Object1_hist_Av[0], 1);
-        cout << Object1_hist_Av[0] << endl;
+        //cout << Object1_hist_Av[0] << endl;
         //namedWindow("AvObj1",WINDOW_NORMAL);
         //resizeWindow("AvObj1", Window*4, Window*4);
         //Object1_Avg.convertTo(Object1_Avg, CV_8UC1);
@@ -219,20 +219,20 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
     {
         for (int i = 0; i < Object2_Index; i++)
         {
-            std::cout << Stack.channels() << endl;
-            std::cout << Object2_Avg.channels() << endl;
+            //std::cout << Stack.channels() << endl;
+            //std::cout << Object2_Avg.channels() << endl;
             meanStdDev(Object2_array[i], Object2_mean[i], Object2_stddev[i]);
             Object2_array[i].convertTo(Stack, CV_32F);
-            cout << Stack.size() << endl ;
-            cout << Object2_array[i].size() << endl ;
-            cout << Object2_Avg.size() << endl;
-            cout << Object2_hist_Av[0] << endl;
-            cout << Object2_hist[i] << endl;
+            //cout << Stack.size() << endl ;
+            //cout << Object2_array[i].size() << endl ;
+            //cout << Object2_Avg.size() << endl;
+            //cout << Object2_hist_Av[0] << endl;
+            //cout << Object2_hist[i] << endl;
             cv::add(Object2_hist[i], Object2_hist_Av[0], Object2_hist_Av[0]) ;
-            cout << Object2_hist_Av[0] << endl;
+            //cout << Object2_hist_Av[0] << endl;
         }
         cv::divide(Object2_hist_Av[0], ((Object2_hist_Av[0]*0) + Object2_Index), Object2_hist_Av[0], 1);
-        cout << Object2_hist_Av[0] << endl;
+        //cout << Object2_hist_Av[0] << endl;
         namedWindow("AvObj1",WINDOW_NORMAL);
         resizeWindow("AvObj1", Window*8, Window*8);
         Object2_Avg.convertTo(Object2_Avg, CV_8UC1);
@@ -245,20 +245,20 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
     {
         for (int i = 0; i < BackGround_Index; i++)
         {
-            std::cout << Stack.channels() << endl;
-            std::cout << BackGround_Avg.channels() << endl;
+            //std::cout << Stack.channels() << endl;
+            //std::cout << BackGround_Avg.channels() << endl;
             cv::meanStdDev(BackGround_array[i], BackGround_mean.at(i), BackGround_stddev.at(i));
             BackGround_array[i].convertTo(Stack, CV_32F);
-            cout << Stack.size() << endl ;
-            cout << BackGround_array[i].size() << endl ;
-            cout << BackGround_Avg.size() << endl;
-            cout << BackGround_hist_Av[0] << endl;
-            cout << BackGround_hist[i] << endl;
+            //cout << Stack.size() << endl ;
+            //cout << BackGround_array[i].size() << endl ;
+            //cout << BackGround_Avg.size() << endl;
+            //cout << BackGround_hist_Av[0] << endl;
+            //cout << BackGround_hist[i] << endl;
             cv::add(BackGround_hist[i], BackGround_hist_Av[0], BackGround_hist_Av[0]) ;
-            cout << BackGround_hist_Av[0] << endl;
+            //cout << BackGround_hist_Av[0] << endl;
         }
         cv::divide(BackGround_hist_Av[0], ((BackGround_hist_Av[0]*0) + BackGround_Index), BackGround_hist_Av[0], 1);
-        cout << BackGround_hist_Av[0] << endl;
+        //cout << BackGround_hist_Av[0] << endl;
         //namedWindow("AvObj1",WINDOW_NORMAL);
         //resizeWindow("AvObj1", Window*4, Window*4);
         //BackGround_Avg.convertTo(BackGround_Avg, CV_8UC1);
@@ -268,11 +268,11 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
         //cv::waitKey(4000);
         for (unsigned ii=0; ii <BackGround_Index; ii++)
         {
-            std::cout << ' ' << BackGround_mean.at(ii)<< endl;
-                 cout << BackGround_mean.size() << endl;
+            //std::cout << ' ' << BackGround_mean.at(ii)<< endl;
+            //     cout << BackGround_mean.size() << endl;
         }
-        std::cout << '\n';
-        cout << BackGround_mean.size() << endl;
+        //std::cout << '\n';
+        //cout << BackGround_mean.size() << endl;
         //cout << BackGround_mean << endl;
         std::vector<double> Stack(BackGround_Index);
         for(int i=0; i < BackGround_Index; i++)
@@ -281,8 +281,8 @@ void MeanHistogram(int Object1_Index, int Object2_Index, int BackGround_Index)
         }
         cv::minMaxLoc(Stack, &Min_BkGn_mean, &Max_BkGn_mean);
         cv::minMaxLoc(BackGround_stddev, &Min_BkGn_STD, &Max_BkGn_STD);
-        cout << "Min: " << Min_BkGn_mean  << " Max: " << Max_BkGn_mean << endl;
-        cout << "Min: " << Min_BkGn_STD  << " Max: " << Max_BkGn_STD << endl;
+        //cout << "Min: " << Min_BkGn_mean  << " Max: " << Max_BkGn_mean << endl;
+        //cout << "Min: " << Min_BkGn_STD  << " Max: " << Max_BkGn_STD << endl;
     }
 }
 void showHistogram()
@@ -427,11 +427,12 @@ void SetUps(int Illu_Correct, int Blurring_size)
     Mat img_clean;    int Object1_Index = 0;
     int Object2_Index = 0;
     int BackGround_Index = 0;
-    src = src_original;
+    //src = src_original;
     //img_clean.create(2,2,CV_8UC3);
     //img.create(2,2,CV_8UC1);
-    img.convertTo(img_background2, CV_32FC3); // or CV_32F works (too)
-    img.convertTo(img_clean2, CV_32FC3);      // img_clean2 is a 32 bit floating point image
+    //cout << src.channels() << endl;
+    src.convertTo(img_background2, CV_32FC3); // or CV_32F works (too)
+    src.convertTo(img_clean2, CV_32FC3);      // img_clean2 is a 32 bit floating point image
     src.convertTo(src2, CV_32FC3);            // src2 is a 32 bit floating point image
     //img = src.clone();
     /*
@@ -449,8 +450,19 @@ void SetUps(int Illu_Correct, int Blurring_size)
         //img_clean2 = src - img_background;
     }
     */
+
+    //////////////////////////////You may not need this ///////////////////////
+    int ii = 2;
+    blur( img_clean2, img_clean2, Size( ii, ii ));
+    ///////////////////////////////////////////////////////////////////////////
+
     if (Illu_Correct == 1)
     {
+
+        vector<Mat> rgbChannels(3);
+
+        split(img_clean2, rgbChannels);
+        double min, max;
         int ii = Blurring_size ;
         blur( src2, img_background2, Size( ii, ii ));
         blur( img_background2, img_background2, Size( ii, ii ));
@@ -466,40 +478,43 @@ void SetUps(int Illu_Correct, int Blurring_size)
         //imshow( "RawImage", src );
         //waitKey(1000);
 
+        Mat g;
 
-    }
-    else
-    {
-        img_clean2 = src2 ;
-        //img_clean2.convertTo(img_clean, CV_8UC3);   // img_clean2 is a 8 bit UChar image
-    }
-    /// Split the image into different channels
-    vector<Mat> rgbChannels(3);
-    int ii = 2;
-    blur( img_clean2, img_clean2, Size( ii, ii ));
-    split(img_clean2, rgbChannels);
-    double min, max;
-    // Show individual channels
-    Mat g;
-    fin_img.create(2,2,CV_32FC3);
-    g = Mat::zeros(Size(src.cols, src.rows), CV_32FC1);
-    // Showing Red Channel
-    // G and B channels are kept as zero matrix for visual perception
-    {
+        //fin_img.create(2,2,CV_32FC3);
+        fin_img = Mat::zeros(Size(src.cols, src.rows), CV_32FC3);
+        g = Mat::zeros(Size(src.cols, src.rows), CV_32FC1);
+        // Showing Red Channel
+        // G and B channels are kept as zero matrix for visual perception
+        /// Split the image into different channels
         vector<Mat> channels;
         cv::minMaxLoc(rgbChannels[0], &min, &max);          //Blue
         rgbChannels[0] = rgbChannels[0] - min;
         channels.push_back(rgbChannels[0]);
-        cv::minMaxLoc(rgbChannels[1], &min, &max);          //Green
-        rgbChannels[1] = rgbChannels[1] - min;
-        channels.push_back(rgbChannels[1]);
-        cv::minMaxLoc(rgbChannels[2], &min, &max);          //Red
-        rgbChannels[2] = rgbChannels[2] - min;
-        channels.push_back(rgbChannels[2]);
-        merge(channels, fin_img);
-        //blur( fin_img, fin_img, Size( 2, 2 ));
-        fin_img.convertTo(fin_img, CV_8UC3);
+        if (src.channels() == 3)
+        {
+            cv::minMaxLoc(rgbChannels[1], &min, &max);          //Green
+            rgbChannels[1] = rgbChannels[1] - min;
+            channels.push_back(rgbChannels[1]);
+            cv::minMaxLoc(rgbChannels[2], &min, &max);          //Red
+            rgbChannels[2] = rgbChannels[2] - min;
+
+            channels.push_back(rgbChannels[2]);
+            merge(channels, fin_img);
+            //blur( fin_img, fin_img, Size( 2, 2 ));
+            fin_img.convertTo(fin_img, CV_8UC3);
+        }
+        else
+        {
+           merge(channels, fin_img);
+           fin_img.convertTo(fin_img, CV_8UC1);
+        }
+
     }
+
+
+
+    // Show individual channels
+
     //imshow( "BackGround", img_background2 );
     //waitKeyJJ = JJ + 1;
     //int ssize[3] = { w.ROII, w.ROII, 10 };
@@ -507,66 +522,106 @@ void SetUps(int Illu_Correct, int Blurring_size)
     //std::cout << SS.channels() << endl ;
     //std::cout << SS.at<cv::Vec3f>(21,21)[3] << endl;(2000);
 
-    src = fin_img;
-    cvtColor( src, src_gray, CV_BGR2GRAY );
-    src = src_gray;
 
+    if (src.channels() == 3)
+    {
+        cvtColor( fin_img, src_gray, CV_BGR2GRAY );
+        src = src_gray;
+    }
+    else
+    {
+        src = fin_img;
+        src_gray = src;
+    }
 }
 
+void ClaheCorrection(int CurrentClahe)
+{
+    Ptr<CLAHE> clahe = createCLAHE();
+    clahe->setClipLimit(CurrentClahe);
+
+    Mat dst;
+    //clahe->apply(src,dst);
+    clahe->apply(src,src);
+    //imshow("lena_CLAHE",dst);
+    //cv::waitKey(1111);
+}
+
+void LoadImage()
+{
+    QString filename = QFileDialog::getOpenFileName();
+    std::string filename2 = filename.toStdString();
+    //src=imread("/home/yjon701/Documents/ImageProcessing/2MicroBeed_Fresh_Transmission_Green.jpg",1);
+    src_original = imread(filename2);
+    src = src_original;
+    fin_img = src_original;
+    setWindowProperty(winName, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+    imshow(winName,src);
+    resizeWindow(winName, 660, 660);
+    imshow(winName,src);
+    waitKey(1);
+}
 
 //int main()
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
+    Mat One_StepBack_src;
     std::cout<< "Hello" << std::endl;
-    std::cout<< w.ROII  << std::endl;
+    //std::cout<< w.ROII  << std::endl;
     int Illumination_Mode = w.Illumination;         // 0 means no illumination correction
     int Current_Blurr_size = w.Blurr_size;
     w.show();
     cout<<"Click and drag for Selection"<<endl<<endl;
-    cout<<"------> Press 's' to save"<<endl<<endl;
-    cout<<"------> Press '3' to select the sample"<<endl;
-    cout<<"------> Press '2' count the objects after sample selection"<<endl;
-    cout<<"------> Press '1' count the objects after sample selection (inverse thresholding)"<<endl;
-    cout<<"------> Press 'a' to reset the image to the original"<<endl;
-    cout<<"------> Press 't' for image thresholding"<<endl;
+    cout<<"------> Press 's' to save the ROI Window"<<endl<<endl;
+    cout<<"------> Press '0' to select the sample"<<endl;
+    cout<<"------> Press '1' for threshould 1"<<endl;
+    cout<<"------> Press '2' for threshould 2"<<endl;
+    cout<<"------> Press '3' for threshould 2"<<endl;
+    cout<<"------> Press '4' for threshould 2"<<endl;
+
+    cout<<"------> Press 'o' to reset the image to the original"<<endl;
+    //cout<<"------> Press 't' for image thresholding"<<endl;
     cout<<"------> Press 'u' to move up"<<endl;
     cout<<"------> Press 'd' to move down"<<endl;
     cout<<"------> Press 'r' to move right"<<endl;
     cout<<"------> Press 'l' to move left"<<endl<<endl;
     cout<<"------> Press 'Esc' to quit"<<endl<<endl;
     namedWindow(winName,WINDOW_NORMAL);
-    QString filename = QFileDialog::getOpenFileName();
-    std::string filename2 = filename.toStdString();
-    //src=imread("/home/yjon701/Documents/ImageProcessing/2MicroBeed_Fresh_Transmission_Green.jpg",1);
-    src = imread(filename2);
-    src_original = src;
-    setWindowProperty(winName, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
-    imshow(winName,src);
-    resizeWindow(winName, 658, 520);
-    imshow(winName,src);
-    waitKey(1);
+    LoadImage();
     SetUps(w.Illumination,  w.Blurr_size);
     setMouseCallback(winName,onMouse,NULL );
-
+    One_StepBack_src = src;
+    char c;
     while(1)
     {
-        char c=waitKey(1);
+
         c = '~';
         while (c == '~')
         {
             Window = w.ROII;
-            if ((w.Illumination != Illumination_Mode) || ((w.Blurr_size != Current_Blurr_size)&&(w.Illumination == 1)))
+            if ((w.Illumination != Illumination_Mode) || (w.Illumination_Button))
             {
+                w.Illumination_Button = 0 ;
                 Current_Blurr_size = w.Blurr_size;
                 Illumination_Mode = w.Illumination;
                 SetUps(w.Illumination,  w.Blurr_size);
-                cout << 'Illumination is now in mode ' << Illumination_Mode << endl;
             }
             if (ROI_Mag != w.Magnification)
             {
                 ROI_Mag = w.Magnification;
+            }
+            if (w.LoadImageButton)
+            {
+                w.LoadImageButton = 0;
+                LoadImage();
+                SetUps(w.Illumination,  w.Blurr_size);
+            }
+            if (w.Clahe_CliButton)
+            {
+                w.Clahe_CliButton = 0;
+                ClaheCorrection(w.Clahe_ClipLimit);
             }
             c=waitKey(500);
         }
@@ -644,13 +699,31 @@ int main(int argc, char *argv[])
         if(c=='b') cropRect.height--;
         if(c=='f') { cropRect.x++; cropRect.width--;}
         */
-        if(c=='a') {cvtColor( fin_img, src, CV_BGR2GRAY );}         // resets
-        if(c=='t') {threshold( src_gray, src, w.ThreshVale, MaxThresh, w.Instance );}
+        if(c=='o') {cvtColor( src_original, src, CV_BGR2GRAY );}         // resets
+        //if(c=='t') {threshold( src_gray, src, w.ThreshVale, MaxThresh, w.Instance );}
         if(c=='m')
         {
             int threshh = (Min_BkGn_mean - Max_BkGn_STD*2) ;
-            cout << "threshh: " << threshh << endl;
+            //cout << "threshh: " << threshh << endl;
         }
+        /*
+        if(c=='b')
+        {
+            src = One_StepBack_src;
+            imshow("sdfsfsdfsdfsdf",src);
+            resizeWindow("sdfsfsdfsdfsdf", 258, 520);
+            imshow("sdfsfsdfsdfsdf",One_StepBack_src);
+            waitKey(2221);
+        }
+        if((c=='1')||(c=='2')||(c=='3')||(c=='4'))
+        {
+            One_StepBack_src = src;
+            imshow("1111111111111111",src);
+            resizeWindow("1111111111111111", 458, 520);
+            imshow("1111111111111111",One_StepBack_src);
+            waitKey(2221);
+        }
+        */
         if(c=='1')
         {
             MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
