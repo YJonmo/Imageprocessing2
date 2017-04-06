@@ -421,19 +421,24 @@ void onMouse( int event, int x, int y, int f, void* )
 void SetUps(int Illu_Correct, int Blurring_size)
 {
 
+    src = src_original;
+
     Mat img_background2;
     Mat img_background;
     Mat img_clean2;
     Mat img_clean;    int Object1_Index = 0;
     int Object2_Index = 0;
     int BackGround_Index = 0;
-    //src = src_original;
     //img_clean.create(2,2,CV_8UC3);
+
+
     //img.create(2,2,CV_8UC1);
-    //cout << src.channels() << endl;
-    src.convertTo(img_background2, CV_32FC3); // or CV_32F works (too)
-    src.convertTo(img_clean2, CV_32FC3);      // img_clean2 is a 32 bit floating point image
+
+    img.convertTo(img_background2, CV_32FC3); // or CV_32F works (too)
+    img.convertTo(img_clean2, CV_32FC3);      // img_clean2 is a 32 bit floating point image
     src.convertTo(src2, CV_32FC3);            // src2 is a 32 bit floating point image
+
+
     //img = src.clone();
     /*
     namedWindow("Back_Subbed",WINDOW_NORMAL);
@@ -450,89 +455,52 @@ void SetUps(int Illu_Correct, int Blurring_size)
         //img_clean2 = src - img_background;
     }
     */
-
-    //////////////////////////////You may not need this ///////////////////////
-    int ii = 2;
-    blur( img_clean2, img_clean2, Size( ii, ii ));
-    ///////////////////////////////////////////////////////////////////////////
-
-    if (Illu_Correct == 1)
+    if(Illu_Correct)
     {
-
-        vector<Mat> rgbChannels(3);
-
-        split(img_clean2, rgbChannels);
-        double min, max;
         int ii = Blurring_size ;
         blur( src2, img_background2, Size( ii, ii ));
-        blur( img_background2, img_background2, Size( ii, ii ));
         img_clean2 = src2 - img_background2;
         img_background2.convertTo(img_background, CV_8UC3);
 
-        namedWindow("Back_Subbed",WINDOW_NORMAL);
-        resizeWindow("Back_Subbed", 558, 420);
-        imshow( "Back_Subbed", img_background );
-        waitKey(1000);
-        //namedWindow("RawImage",WINDOW_NORMAL);
-        //resizeWindow("RawImage", 558, 420);
-        //imshow( "RawImage", src );
-        //waitKey(1000);
 
-        Mat g;
-
-        //fin_img.create(2,2,CV_32FC3);
-        fin_img = Mat::zeros(Size(src.cols, src.rows), CV_32FC3);
+        /// Split the image into different channels
+        vector<Mat> rgbChannels(3);
+        ii = 2;
+        blur( img_clean2, img_clean2, Size( ii, ii ));
+        split(img_clean2, rgbChannels);
+        double min, max;
+        // Show individual channels
+        Mat g, fin_img;
+        fin_img.create(2,2,CV_32FC3);
         g = Mat::zeros(Size(src.cols, src.rows), CV_32FC1);
         // Showing Red Channel
         // G and B channels are kept as zero matrix for visual perception
-        /// Split the image into different channels
         vector<Mat> channels;
+
         cv::minMaxLoc(rgbChannels[0], &min, &max);          //Blue
         rgbChannels[0] = rgbChannels[0] - min;
         channels.push_back(rgbChannels[0]);
-        if (src.channels() == 3)
-        {
-            cv::minMaxLoc(rgbChannels[1], &min, &max);          //Green
-            rgbChannels[1] = rgbChannels[1] - min;
-            channels.push_back(rgbChannels[1]);
-            cv::minMaxLoc(rgbChannels[2], &min, &max);          //Red
-            rgbChannels[2] = rgbChannels[2] - min;
 
-            channels.push_back(rgbChannels[2]);
-            merge(channels, fin_img);
-            //blur( fin_img, fin_img, Size( 2, 2 ));
-            fin_img.convertTo(fin_img, CV_8UC3);
-        }
-        else
-        {
-           merge(channels, fin_img);
-           fin_img.convertTo(fin_img, CV_8UC1);
-        }
+        cv::minMaxLoc(rgbChannels[1], &min, &max);          //Green
+        rgbChannels[1] = rgbChannels[1] - min;
+        channels.push_back(rgbChannels[1]);
 
-    }
+        cv::minMaxLoc(rgbChannels[2], &min, &max);          //Red
+        rgbChannels[2] = rgbChannels[2] - min;
+        channels.push_back(rgbChannels[2]);
 
+        merge(channels, fin_img);
+        //blur( fin_img, fin_img, Size( 2, 2 ));
+        fin_img.convertTo(fin_img, CV_8UC3);
 
-
-    // Show individual channels
-
-    //imshow( "BackGround", img_background2 );
-    //waitKeyJJ = JJ + 1;
-    //int ssize[3] = { w.ROII, w.ROII, 10 };
-    //cv::Mat SS(10, ssize, CV_32FC1, cv::Scalar(10));
-    //std::cout << SS.channels() << endl ;
-    //std::cout << SS.at<cv::Vec3f>(21,21)[3] << endl;(2000);
-
-
-    if (src.channels() == 3)
-    {
         cvtColor( fin_img, src_gray, CV_BGR2GRAY );
-        src = src_gray;
+
     }
     else
     {
-        src = fin_img;
-        src_gray = src;
+        cvtColor( src, src_gray, CV_BGR2GRAY );
     }
+    src = src_gray;
 }
 
 void ClaheCorrection(int CurrentClahe)
@@ -557,6 +525,7 @@ void LoadImage()
     fin_img = src_original;
     setWindowProperty(winName, CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
     imshow(winName,src);
+    waitKey(1);
     resizeWindow(winName, 660, 660);
     imshow(winName,src);
     waitKey(1);
@@ -593,6 +562,7 @@ int main(int argc, char *argv[])
     SetUps(w.Illumination,  w.Blurr_size);
     setMouseCallback(winName,onMouse,NULL );
     One_StepBack_src = src;
+    Mat src_stack;
     char c;
     while(1)
     {
@@ -749,6 +719,29 @@ int main(int argc, char *argv[])
             threshold( src_gray, src, (Max_BkGn_mean + Max_BkGn_STD*2), MaxThresh, 4 );
             countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 4);
         }
+
+        if(c=='5')
+        {
+            MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
+            threshold( src_gray, src, (Min_BkGn_mean - Max_BkGn_STD*2), MaxThresh, 4 );
+            //countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 4);
+            waitKey(3000);
+            src_stack = src.clone();
+            cvtColor( src_original, src, CV_BGR2GRAY );
+            MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
+            threshold( src_gray, src, (Max_BkGn_mean + Max_BkGn_STD*2), MaxThresh, 3 );
+            src = src_stack.clone() + src.clone();
+            countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 3);
+        }
+//        if(c=='6')
+//        {
+//            MeanHistogram(w.Object1_Index, w.Object2_Index, w.BackGround_Index);
+//            threshold( src_gray, src, (Max_BkGn_mean + Max_BkGn_STD*2), MaxThresh, 3 );
+//            src = src_stack.clone() + src.clone();
+//            countObjects(w.Object1_Index, w.Object2_Index, w.BackGround_Index, 3);
+
+//        }
+
         if(c==27) break;
         //if(c=='r') {cropRect.x=0;cropRect.y=0;cropRect.width=0;cropRect.height=0;}
         showImage();
@@ -756,3 +749,13 @@ int main(int argc, char *argv[])
     //return a.exec();
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
